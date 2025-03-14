@@ -1,0 +1,36 @@
+{
+  "name": "vristo-vue-vite",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@vueuse/head": "^2.0.0",
+    "pinia": "^3.0.1",
+    "vue": "^3.5.13",
+    "vue-height-collapsible": "^0.1.1",
+    "vue-i18n": "^11.1.2",
+    "vue-router": "^4.5.0",
+    "vue3-perfect-scrollbar": "^2.0.0",
+    "vue3-popper": "^1.5.0",
+    "web-secure-encryption": "^1.0.3"
+  },
+  "devDependencies": {
+    "@intlify/unplugin-vue-i18n": "^6.0.3",
+    "@rollup/plugin-alias": "^5.1.1",
+    "@tailwindcss/forms": "^0.5.10",
+    "@tailwindcss/typography": "^0.5.16",
+    "@types/node": "^22.13.10",
+    "@vitejs/plugin-vue": "^5.2.1",
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.8",
+    "vite": "^5.4.1",
+    "vue-tsc": "^2.2.8"
+  }
+}

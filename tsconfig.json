@@ -1,0 +1,38 @@
+{
+    "compilerOptions": {
+        "target": "ESNext",
+        "useDefineForClassFields": true,
+        "module": "ESNext",
+        "moduleResolution": "Node",
+        "strict": true,
+        "jsx": "react",
+        "sourceMap": true,
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "esModuleInterop": true,
+        "lib": ["ESNext", "DOM"],
+        "skipLibCheck": true,
+        "baseUrl": "./",
+        "paths": {
+            "@/*": ["src/*"],
+            "@locales/*": ["src/locales/*"],
+            "@router/*": ["src/router/*"],
+            "@components/*": ["src/components/*"],
+            "@views/*": ["src/views/*"],
+            "@views": ["src/views/index.ts"],
+            "@stores/*": ["src/stores/*"],
+            "@stores": ["src/stores/index.ts"],
+            "@composables/*": ["src/composables/*"],
+            "@layouts/*": ["src/layouts/*"],
+        },
+        "noImplicitAny": false,
+        "allowJs": true,
+        "types": ["@intlify/unplugin-vue-i18n/messages", "node"]
+    },
+    "include": ["src/**/*.js", "src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
+    "references": [
+        {
+            "path": "./tsconfig.node.json"
+        }
+    ]
+}
