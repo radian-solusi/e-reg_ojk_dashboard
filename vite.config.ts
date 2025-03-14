@@ -2,8 +2,14 @@ import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import path from 'path';
 import VueI18nPlugin from '@intlify/unplugin-vue-i18n/vite';
+import dotenv from 'dotenv';
+dotenv.config();
 
 export default defineConfig({
+    server: {
+        port: parseInt(process.env.VITE_APP_PORT) ?? 5000,
+        strictPort: true,
+    },
     plugins: [
         vue(),
         VueI18nPlugin({
@@ -24,9 +30,6 @@ export default defineConfig({
     },
     optimizeDeps: {
         include: [],
-    },
-    server: {
-        port: parseInt(process.env.VITE_API_URL) ?? 5000,
     },
     build: {
         outDir: 'output',
