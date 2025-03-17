@@ -61,11 +61,6 @@
                                 <div class="w-full h-[10%] -mt-[120%] md:-mt-[150%]">
                                     <img src="/assets/images/ojk.svg" alt="" class="w-full" />
                                 </div>
-                                <div class="w-full">
-                                    <h1 class="text-3xl font-extrabold uppercase !leading-snug text-primary md:text-4xl">OJK Dashboard</h1>
-                                    <p v-if="!showOtp" class="text-base font-bold leading-normal text-white-dark">{{ $t('enter_credential') }}</p>
-                                    <p v-else class="text-base font-bold leading-normal text-white-dark">{{ $t('otp_authenticator') }}</p>
-                                </div>
                             </div>
                         </div>
                         <p v-if="errors.message" class="text-red-500 text-sm text-center mb-4">
@@ -137,7 +132,6 @@
     import { useRouter } from 'vue-router';
     import { useMeta } from '@/composables/use-meta';
     import { IconCaretDown, IconMail, IconLockDots } from '@components/icon'
-    import type { AxiosError } from 'axios';
     import { ErrorResponse, LoginResponse } from '@/composables/types';
 import { fetchWrapper } from '@/composables/fetchers';
     const API_URL = import.meta.env.VITE_API_URL;
@@ -170,10 +164,22 @@ import { fetchWrapper } from '@/composables/fetchers';
         return `/assets/images/flags/${i18n.locale.toUpperCase()}.svg`;
     });
 
-    const verifyUser = async () => {
-        try {
-            const response = await fetchWrapper.post<LoginResponse>(`${API_URL}/ojk/auth/login`, forms.value);
+    const resetErrors = () => {
+        errors.value = {
+            email: '',
+            password: '',
+            message: '',
+            otp: ''
+        };
+    };
 
+    const verifyUser = async () => {
+        resetErrors()
+
+        try {
+            const response = await fetchWrapper<LoginResponse>("POST", "/ojk/auth/login", forms.value)
+    
+            console.log(response)
             if (response.success) {
                 if (response.data.require_otp) {
                     requireOtp.value = true;
@@ -200,11 +206,12 @@ import { fetchWrapper } from '@/composables/fetchers';
     }
 
     const verifyOtp = async () => {
+        resetErrors()
+
         try {
-            const response = await fetchWrapper.post<LoginResponse>(`${API_URL}/ojk/auth/verify-otp`, forms.value);
+            const response = await fetchWrapper<LoginResponse>("POST", "/ojk/auth/verify-otp", forms.value);
 
             if (response.success && !response.data.require_otp) {
-                console.log("success", response.data)
                 authStore.user = {
                     username: forms.value.email,
                     token: response.data.token,
