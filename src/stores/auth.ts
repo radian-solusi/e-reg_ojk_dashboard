@@ -58,5 +58,5 @@ export const useAuthStore = defineStore('auth', () => {
     const getReturnUrl = () => {
         return returnUrl.value
     }
-    return { user, isLogin, saveToStorage, getToken, logout, login, setReturnUrl, getReturnUrl }
+    return { user, isLogin, syncFromStrorage, saveToStorage, getToken, logout, login, setReturnUrl, getReturnUrl }
 })

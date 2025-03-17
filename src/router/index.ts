@@ -27,7 +27,7 @@ const router = createRouter({
     },
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
     const store = useAppStore();
     const auth = useAuthStore();
     const publicPages = ['/login'];
@@ -36,6 +36,12 @@ router.beforeEach((to, from, next) => {
         store.setMainLayout('auth');
     } else {
         store.setMainLayout('app');
+    }
+
+    await auth.syncFromStrorage();
+
+    if (to.path === '/login' && auth.isLogin) {
+        return next({ path: '/' });
     }
 
     if (authRequired && !auth.isLogin) {
