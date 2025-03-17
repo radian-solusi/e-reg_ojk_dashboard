@@ -61,25 +61,25 @@
                                     <img src="/assets/images/ojk.svg" alt="" class="bg-cover bg-center" />
                                 </div>
                                 <div>
-                                    <h1 class="text-3xl font-extrabold uppercase !leading-snug text-primary md:text-4xl">Sign in</h1>
-                                    <p class="text-base font-bold leading-normal text-white-dark">Enter your email and password to login</p>
+                                    <h1 class="text-3xl font-extrabold uppercase !leading-snug text-primary md:text-4xl">OJK Dashboard</h1>
+                                    <p class="text-base font-bold leading-normal text-white-dark">{{ $t('enter_credential') }}</p>
                                 </div>
                             </div>
                         </div>
                         <form class="space-y-5 dark:text-white" @submit.prevent="router.push('/')">
                             <div>
-                                <label for="Email">Email</label>
+                                <label for="Email">{{ $t('email') }}</label>
                                 <div class="relative text-white-dark">
-                                    <input id="Email" type="email" placeholder="Enter Email" class="form-input ps-10 placeholder:text-white-dark" />
+                                    <input id="Email" type="email" :placeholder="$t('placeholder_email')" class="form-input ps-10 placeholder:text-white-dark" v-model="forms.email" />
                                     <span class="absolute start-4 top-1/2 -translate-y-1/2">
                                         <icon-mail :fill="true" />
                                     </span>
                                 </div>
                             </div>
                             <div>
-                                <label for="Password">Password</label>
+                                <label for="Password">{{ $t('password') }}</label>
                                 <div class="relative text-white-dark">
-                                    <input id="Password" type="password" placeholder="Enter Password" class="form-input ps-10 placeholder:text-white-dark" />
+                                    <input id="Password" type="password" :placeholder="$t('placeholder_password')" class="form-input ps-10 placeholder:text-white-dark" v-model="forms.password" />
                                     <span class="absolute start-4 top-1/2 -translate-y-1/2">
                                         <icon-lock-dots :fill="true" />
                                     </span>
@@ -87,12 +87,12 @@
                             </div>
                             <div>
                                 <label class="flex cursor-pointer items-center">
-                                    <input type="checkbox" class="form-checkbox bg-white dark:bg-black" />
-                                    <span class="text-white-dark">Remember Me</span>
+                                    <input type="checkbox" class="form-checkbox bg-white dark:bg-black" v-model="forms.remember" />
+                                    <span class="text-white-dark">{{ $t('remember_me') }}</span>
                                 </label>
                             </div>
                             <button type="submit" class="btn btn-primary btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]">
-                                Sign in
+                                {{ $t('signin') }}
                             </button>
                         </form>
                     </div>
@@ -102,21 +102,23 @@
     </div>
 </template>
 <script lang="ts" setup>
-    import { computed, reactive } from 'vue';
+    import { computed, reactive, ref } from 'vue';
     import { useI18n } from 'vue-i18n';
     import appSetting from '@/app-setting';
     import { useAppStore } from '@/stores';
     import { useRouter } from 'vue-router';
     import { useMeta } from '@/composables/use-meta';
-
     import { IconCaretDown, IconMail, IconLockDots } from '@components/icon'
 
     useMeta({ title: 'Login Page' });
     const router = useRouter();
-
     const store = useAppStore();
-    // multi language
     const i18n = reactive(useI18n());
+    const forms = ref({
+        email: '',
+        password: '',
+        remember: false
+    })
     const changeLanguage = (item: any) => {
         i18n.locale = item.code;
         appSetting.toggleLanguage(item);

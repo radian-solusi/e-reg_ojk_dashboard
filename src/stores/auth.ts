@@ -40,7 +40,8 @@ export const useAuthStore = defineStore('auth', () => {
         router.push('/login')
     }
     const login = async () => {
-        saveToStorage()
+        
+        await saveToStorage()
     }
     const setReturnUrl = (url: string) => {
         returnUrl.value = url

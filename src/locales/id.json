@@ -1,0 +1,13 @@
+{
+    "dashboard": "Beranda",
+    "login": "Masuk",
+    "logout": "Keluar",
+    "signin": "Sign In",
+    "enter_credential": "Masukkan alamat email dan kata sandi Anda untuk dapat masuk ke beranda",
+    "email": "Alamat Email",
+    "password": "Kata Sandi",
+    "remember_me": "Ingat Saya",
+    "placeholder_email": "Masukkan alamat email Anda",
+    "placeholder_password": "Masukkan kata sandi Anda",
+    "menu": "Menu"
+}
