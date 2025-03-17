@@ -10,5 +10,8 @@
     "placeholder_email": "Masukkan alamat email Anda",
     "placeholder_password": "Masukkan kata sandi Anda",
     "menu": "Menu",
-    "otp_authenticator": "Silakan luncurkan Aplikasi Authenticator dan masukkan kodenya"
+    "otp_authenticator": "Silakan luncurkan Aplikasi Authenticator dan masukkan kodenya", 
+    "otp_label": "Kode Autentikasi",
+    "placeholder_otp": "Masukkan kode autentikasi dari aplikasi Anda"
+    
 }

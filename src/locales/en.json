@@ -10,5 +10,7 @@
     "placeholder_email": "Enter your email address",
     "placeholder_password": "Enter your password",
     "menu": "Menu",
-    "otp_authenticator": "Please launch Authenticator Application and enter otentication code"
+    "otp_authenticator": "Please launch Authenticator Application and enter otentication code",
+    "otp_label": "Authentication Code",
+    "placeholder_otp": "Enter the authentication code from your app"
 }
