@@ -68,38 +68,61 @@
                                 </div>
                             </div>
                         </div>
-                        <form v-if="!showOtp" class="space-y-5 dark:text-white" @submit.prevent="processLogin">
-                            <div>
-                                <label for="Email">{{ $t('email') }}</label>
-                                <div class="relative text-white-dark">
-                                    <input id="Email" type="email" :placeholder="$t('placeholder_email')" class="form-input ps-10 placeholder:text-white-dark" v-model="forms.email" />
-                                    <span class="absolute start-4 top-1/2 -translate-y-1/2">
-                                        <icon-mail :fill="true" />
-                                    </span>
+                        <p v-if="errors.message" class="text-red-500 text-sm text-center mb-4">
+                            {{ errors.message }}
+                        </p>
+                        <div v-if="requireOtp">
+                            <form class="space-y-5 dark:text-white" @submit.prevent="verifyOtp">
+                                <div>
+                                    <label for="otp">{{ $t('otp_label') }}</label>
+                                    <div class="relative text-white-dark">
+                                        <input id="otp" type="text" :placeholder="$t('placeholder_otp')" class="form-input ps-10 placeholder:text-white-dark" v-model="forms.otp" />
+                                        <span class="absolute start-4 top-1/2 -translate-y-1/2">
+                                            <icon-lock-dots :fill="true" />
+                                        </span>
+                                    </div>
+                                    <p v-if="errors.otp" class="text-red-500 text-sm">{{ errors.otp }}</p>
                                 </div>
-                            </div>
-                            <div>
-                                <label for="Password">{{ $t('password') }}</label>
-                                <div class="relative text-white-dark">
-                                    <input id="Password" type="password" :placeholder="$t('placeholder_password')" class="form-input ps-10 placeholder:text-white-dark" v-model="forms.password" />
-                                    <span class="absolute start-4 top-1/2 -translate-y-1/2">
-                                        <icon-lock-dots :fill="true" />
-                                    </span>
-                                </div>
-                            </div>
-                            <div>
-                                <label class="flex cursor-pointer items-center">
-                                    <input type="checkbox" class="form-checkbox bg-white dark:bg-black" v-model="forms.remember" />
-                                    <span class="text-white-dark">{{ $t('remember_me') }}</span>
-                                </label>
-                            </div>
-                            <button type="submit" class="btn btn-primary btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]">
-                                {{ $t('signin') }}
-                            </button>
-                        </form>
-                        <div v-else class="space-y-5 dark:text-white">
-                            <login-otp />
+                                <button type="submit" class="btn btn-primary btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]">
+                                    {{ $t('signin') }}
+                                </button>
+                            </form>
                         </div>
+                        <div v-else>
+                            <form class="space-y-5 dark:text-white" @submit.prevent="verifyUser">
+                                <div>
+                                    <label for="Email">{{ $t('email') }}</label>
+                                    <div class="relative text-white-dark">
+                                        <input id="Email" type="email" :placeholder="$t('placeholder_email')" class="form-input ps-10 placeholder:text-white-dark" v-model="forms.email" />
+                                        <span class="absolute start-4 top-1/2 -translate-y-1/2">
+                                            <icon-mail :fill="true" />
+                                        </span>
+                                    </div>
+                                    <p v-if="errors.email" class="text-red-500 text-sm">{{ errors.email }}</p>
+                                </div>
+                                <div>
+                                    <label for="Password">{{ $t('password') }}</label>
+                                    <div class="relative text-white-dark">
+                                        <input id="Password" type="password" :placeholder="$t('placeholder_password')" class="form-input ps-10 placeholder:text-white-dark" v-model="forms.password" />
+                                        <span class="absolute start-4 top-1/2 -translate-y-1/2">
+                                            <icon-lock-dots :fill="true" />
+                                        </span>
+                                    </div>
+                                    <p v-if="errors.password" class="text-red-500 text-sm">{{ errors.password }}</p>
+
+                                </div>
+                                <div>
+                                    <label class="flex cursor-pointer items-center">
+                                        <input type="checkbox" class="form-checkbox bg-white dark:bg-black" v-model="forms.remember" />
+                                        <span class="text-white-dark">{{ $t('remember_me') }}</span>
+                                    </label>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]">
+                                    {{ $t('signin') }}
+                                </button>
+                            </form>
+                        </div>
+                       
                     </div>
                 </div>
             </div>
@@ -110,23 +133,35 @@
     import { computed, reactive, ref } from 'vue';
     import { useI18n } from 'vue-i18n';
     import appSetting from '@/app-setting';
-    import { useAppStore, useAuthStore } from '@stores';
+    import { useAppStore, useAuthStore } from '@/stores';
     import { useRouter } from 'vue-router';
     import { useMeta } from '@/composables/use-meta';
     import { IconCaretDown, IconMail, IconLockDots } from '@components/icon'
-    import LoginOtp from '@components/pages/LoginOtp.vue';
+    import type { AxiosError } from 'axios';
+    import { ErrorResponse, LoginResponse } from '@/composables/types';
+import { fetchWrapper } from '@/composables/fetchers';
+    const API_URL = import.meta.env.VITE_API_URL;
 
     useMeta({ title: 'Login Page' });
     const router = useRouter();
     const store = useAppStore();
+    const authStore = useAuthStore(); 
     const i18n = reactive(useI18n());
     const forms = ref({
         email: '',
         password: '',
-        remember: false
+        remember: false,
+        otp: ""
     })
-    const authentication = useAuthStore();
-    const showOtp = ref(true)
+    const errors = ref({
+        email: '',
+        password: '',
+        message: '',
+        otp: ""
+    });
+    const requireOtp = ref(false);
+
+
     const changeLanguage = (item: any) => {
         i18n.locale = item.code;
         appSetting.toggleLanguage(item);
@@ -135,10 +170,63 @@
         return `/assets/images/flags/${i18n.locale.toUpperCase()}.svg`;
     });
 
-    const processLogin = async () => {
-        const state = await authentication.login(forms.value)
-        if(!state.status) {
-            showOtp.value = true
+    const verifyUser = async () => {
+        try {
+            const response = await fetchWrapper.post<LoginResponse>(`${API_URL}/ojk/auth/login`, forms.value);
+
+            if (response.success) {
+                if (response.data.require_otp) {
+                    requireOtp.value = true;
+                } else {
+                    console.log("Login success! Token:", response.data.token);
+                }
+            } else {
+                console.log("Login failed:", response.message);
+            }
+        }
+        catch (err: unknown) {
+            const errorData = err as ErrorResponse; 
+            
+            if (errorData?.error_type === "invalid_credential"){
+                errors.value.message = "invalid credentials"
+            }
+            else if (errorData?.error_type === "validation_error") {
+                const validationError = errorData.data.error
+                errors.value.email = validationError.email ? validationError.email[0] : '';
+                errors.value.password = validationError.password ? validationError.password[0] : ''
+            }
+           
+        }
+    }
+
+    const verifyOtp = async () => {
+        try {
+            const response = await fetchWrapper.post<LoginResponse>(`${API_URL}/ojk/auth/verify-otp`, forms.value);
+
+            if (response.success && !response.data.require_otp) {
+                console.log("success", response.data)
+                authStore.user = {
+                    username: forms.value.email,
+                    token: response.data.token,
+                };
+
+                await authStore.saveToStorage();
+
+                router.push({ name: 'home' }); 
+            } else {
+                console.log("Login failed:", response.message);
+            }
+        }
+        catch (err: unknown) {
+            const errorData = err as ErrorResponse; 
+            
+            if (errorData?.error_type === "invalid_credential"){
+                errors.value.message = "invalid credentials"
+            }
+            else if (errorData?.error_type === "validation_error") {
+                const validationError = errorData.data.error
+                errors.value.otp = validationError.otp ? validationError.otp[0] : '';
+            }
         }
     }
 </script>
