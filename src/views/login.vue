@@ -93,9 +93,10 @@
                                     <span class="text-white-dark">{{ $t('remember_me') }}</span>
                                 </label>
                             </div>
-                            <button type="submit" class="btn btn-primary btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]">
+                            
+                            <buttons as="info" size="md" block other-class="!mt-6 btn-gradient shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)] uppercase">
                                 {{ $t('signin') }}
-                            </button>
+                            </buttons>
                         </form>
                         <div v-else class="space-y-5 dark:text-white">
                             <login-otp />
@@ -115,6 +116,7 @@
     import { useMeta } from '@/composables/use-meta';
     import { IconCaretDown, IconMail, IconLockDots } from '@components/icon'
     import LoginOtp from '@components/pages/LoginOtp.vue';
+    import { Buttons } from "@components/elements"
 
     useMeta({ title: 'Login Page' });
     const router = useRouter();
@@ -126,7 +128,7 @@
         remember: false
     })
     const authentication = useAuthStore();
-    const showOtp = ref(true)
+    const showOtp = ref(false)
     const changeLanguage = (item: any) => {
         i18n.locale = item.code;
         appSetting.toggleLanguage(item);
@@ -140,5 +142,8 @@
         if(!state.status) {
             showOtp.value = true
         }
+    }
+    const testButton = () => {
+        alert('test')
     }
 </script>
