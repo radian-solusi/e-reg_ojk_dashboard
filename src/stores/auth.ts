@@ -24,7 +24,7 @@ export const useAuthStore = defineStore('auth', () => {
     const saveToStorage = async () => {
         // encrypt
         const encryptedAuth = await encrypt(JSON.stringify(user.value))
-        localStorage.setItem('auths', encryptedAuth)
+        localStorage.setItem('auths', encryptedAuth || "")
         isSynced.value = true
     }
 
