@@ -9,5 +9,6 @@
     "remember_me": "Ingat Saya",
     "placeholder_email": "Masukkan alamat email Anda",
     "placeholder_password": "Masukkan kata sandi Anda",
-    "menu": "Menu"
+    "menu": "Menu",
+    "otp_authenticator": "Silakan luncurkan Aplikasi Authenticator dan masukkan kodenya"
 }

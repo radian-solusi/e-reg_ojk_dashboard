@@ -17,6 +17,7 @@
                 <div class="relative flex flex-col justify-center rounded-md bg-white/60 backdrop-blur-lg dark:bg-black/50 px-6 lg:min-h-[758px] py-20">
                     <div class="absolute top-3 end-6">
                         <div class="dropdown">
+                            <!-- language dropdown -->
                             <Popper :placement="store.rtlClass === 'rtl' ? 'bottom-start' : 'bottom-end'" offsetDistance="8">
                                 <button
                                     type="button"
@@ -55,18 +56,19 @@
                         </div>
                     </div>
                     <div class="mx-auto w-full max-w-[440px]">
-                        <div class="mb-1">
-                            <div class="flex justify-between items-center">
-                                <div class="w-6/12">
-                                    <img src="/assets/images/ojk.svg" alt="" class="bg-cover bg-center" />
+                        <div class="mb-3">
+                            <div class="grid grid-cols-1 gap-4 items-center">
+                                <div class="w-full h-[10%] -mt-[120%] md:-mt-[150%]">
+                                    <img src="/assets/images/ojk.svg" alt="" class="w-full" />
                                 </div>
-                                <div>
+                                <div class="w-full">
                                     <h1 class="text-3xl font-extrabold uppercase !leading-snug text-primary md:text-4xl">OJK Dashboard</h1>
-                                    <p class="text-base font-bold leading-normal text-white-dark">{{ $t('enter_credential') }}</p>
+                                    <p v-if="!showOtp" class="text-base font-bold leading-normal text-white-dark">{{ $t('enter_credential') }}</p>
+                                    <p v-else class="text-base font-bold leading-normal text-white-dark">{{ $t('otp_authenticator') }}</p>
                                 </div>
                             </div>
                         </div>
-                        <form class="space-y-5 dark:text-white" @submit.prevent="router.push('/')">
+                        <form v-if="!showOtp" class="space-y-5 dark:text-white" @submit.prevent="processLogin">
                             <div>
                                 <label for="Email">{{ $t('email') }}</label>
                                 <div class="relative text-white-dark">
@@ -95,6 +97,9 @@
                                 {{ $t('signin') }}
                             </button>
                         </form>
+                        <div v-else class="space-y-5 dark:text-white">
+                            <login-otp />
+                        </div>
                     </div>
                 </div>
             </div>
@@ -105,10 +110,11 @@
     import { computed, reactive, ref } from 'vue';
     import { useI18n } from 'vue-i18n';
     import appSetting from '@/app-setting';
-    import { useAppStore } from '@/stores';
+    import { useAppStore, useAuthStore } from '@stores';
     import { useRouter } from 'vue-router';
     import { useMeta } from '@/composables/use-meta';
     import { IconCaretDown, IconMail, IconLockDots } from '@components/icon'
+    import LoginOtp from '@components/pages/LoginOtp.vue';
 
     useMeta({ title: 'Login Page' });
     const router = useRouter();
@@ -119,6 +125,8 @@
         password: '',
         remember: false
     })
+    const authentication = useAuthStore();
+    const showOtp = ref(true)
     const changeLanguage = (item: any) => {
         i18n.locale = item.code;
         appSetting.toggleLanguage(item);
@@ -126,4 +134,11 @@
     const currentFlag = computed(() => {
         return `/assets/images/flags/${i18n.locale.toUpperCase()}.svg`;
     });
+
+    const processLogin = async () => {
+        const state = await authentication.login(forms.value)
+        if(!state.status) {
+            showOtp.value = true
+        }
+    }
 </script>

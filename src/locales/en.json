@@ -9,5 +9,6 @@
     "remember_me": "Remember Me",
     "placeholder_email": "Enter your email address",
     "placeholder_password": "Enter your password",
-    "menu": "Menu"
+    "menu": "Menu",
+    "otp_authenticator": "Please launch Authenticator Application and enter otentication code"
 }
