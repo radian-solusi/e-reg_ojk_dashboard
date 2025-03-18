@@ -181,11 +181,19 @@ import { fetchWrapper } from '@/composables/fetchers';
     
             console.log(response)
             if (response.success) {
-                if (response.data.require_otp) {
-                    requireOtp.value = true;
-                } else {
-                    console.log("Login success! Token:", response.data.token);
+                if (!response.data.require_otp) {
+                    authStore.user = {
+                    username: response.data.name,
+                    token: response.data.token,
+                    isMultiFactorActive: response.data.is_multi_factor_active
+                     };
+
+                    await authStore.saveToStorage();
+                    router.push({ name: 'home' }); 
                 }
+                else if (response.data.require_otp) {
+                    requireOtp.value = true;
+                } 
             } else {
                 console.log("Login failed:", response.message);
             }
