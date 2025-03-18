@@ -5,12 +5,16 @@ import appSetting from '@/app-setting';
 import {
     HomeView,
     Login,
-    ProfileView
+    ProfileView,
+    PasswordResetView
 } from "@views"
 
 const routes: RouteRecordRaw[] = [
     // dashboard
     { path: '/', name: 'home', component: HomeView },
+
+     // reset password
+    { path: '/password-reset', name: 'password-reset', component: PasswordResetView, meta: { layout: 'auth' } },
 
     // profile
     { path: '/profile', name: 'user-profile', component: ProfileView },
@@ -37,7 +41,7 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
     const store = useAppStore();
     const auth = useAuthStore();
-    const publicPages = ['/login'];
+    const publicPages = ['/login', '/password-reset'];
     const authRequired = !publicPages.includes(to.path);
     if (to?.meta?.layout == 'auth') {
         store.setMainLayout('auth');
