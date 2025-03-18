@@ -178,17 +178,17 @@
                                                 <img class="rounded-md w-10 h-10 object-cover" src="/assets/images/user-profile.jpeg" alt="" />
                                             </div>
                                             <div class="ltr:pl-4 rtl:pr-4 truncate">
-                                                <h4 class="text-base">
+                                                <!-- <h4 class="text-base">
                                                     John Doe<span class="text-xs bg-success-light rounded text-success px-1 ltr:ml-2 rtl:ml-2">Pro</span>
-                                                </h4>
+                                                </h4> -->
                                                 <a class="text-black/60 hover:text-primary dark:text-dark-light/60 dark:hover:text-white" href="javascript:;"
-                                                    >johndoe@gmail.com</a
+                                                    >{{ user?.username }}</a
                                                 >
                                             </div>
                                         </div>
                                     </li>
                                     <li>
-                                        <router-link to="/users/profile" class="dark:hover:text-white" @click="close()">
+                                        <router-link to="/profile" class="dark:hover:text-white" @click="close()">
                                             <icon-user class="w-4.5 h-4.5 ltr:mr-2 rtl:ml-2 shrink-0" />
 
                                             Profile
@@ -218,16 +218,18 @@
     import appSetting from '@/app-setting';
 
     import { useRoute } from 'vue-router';
-    import { useAppStore } from '@stores';
+    import { useAppStore, useAuthStore } from '@stores';
 
     import { IconMenu, IconXCircle, IconSun, IconMoon, IconLaptop, IconArrowLeft, IconInfoCircle, IconBellBing, IconUser, IconMail, IconLogout } from '@components/icon';
 
     const store = useAppStore();
+    const authStore = useAuthStore();
     const route = useRoute();
     const search = ref(false);
 
     // multi language
     const i18n = reactive(useI18n());
+    const { user } = useAuthStore()
     const changeLanguage = (item: any) => {
         i18n.locale = item.code;
         appSetting.toggleLanguage(item);

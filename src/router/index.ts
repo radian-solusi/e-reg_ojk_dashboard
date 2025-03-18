@@ -4,14 +4,21 @@ import appSetting from '@/app-setting';
 
 import {
     HomeView,
-    Login
+    Login,
+    ProfileView
 } from "@views"
 
 const routes: RouteRecordRaw[] = [
     // dashboard
     { path: '/', name: 'home', component: HomeView },
+
+    // profile
+    { path: '/profile', name: 'user-profile', component: ProfileView },
+
     // Login
     { path: '/login', name: 'login', component: Login, meta: { layout: 'auth' } },
+
+   
 ];
 
 const router = createRouter({
