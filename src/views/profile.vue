@@ -147,10 +147,12 @@
   <script lang="ts" setup>
   import { onMounted, ref } from "vue";
   import { fetchWrapper } from '@/composables/fetchers';
+  import { useAuthStore } from "@/stores";
   import { MultiFactorResponse, ErrorResponse, SuccessResponse } from "@/composables/types";
 
-  
-  const isTwoFactorEnabled = ref(false);
+
+  const authStore = useAuthStore()
+  const isTwoFactorEnabled = ref(authStore.isMultiFactorActive);
   const showQr = ref(false);
   const showRecovery = ref(false);
   const qrCode = ref(``); // Ganti dengan QR Code yang sesuai
@@ -202,7 +204,6 @@
             const response = await fetchWrapper<MultiFactorResponse>("GET", "/ojk/2fa/info");
 
             if (response.success) {
-                isTwoFactorEnabled.value = true;
                 qrCode.value = response.data.qr_code,
                 recoveryCodes.value = response.data.recovery_codes
             } else {
@@ -221,7 +222,9 @@
 
     // onMounted cycle to get get user 2FA auth informaton
     onMounted(async () => {
-        await getUserMultiFactorInfo()
+        if( authStore.isMultiFactorActive) {
+            await getUserMultiFactorInfo()
+        }
     })
   </script>
   

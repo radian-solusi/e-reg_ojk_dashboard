@@ -213,8 +213,9 @@ import { fetchWrapper } from '@/composables/fetchers';
 
             if (response.success && !response.data.require_otp) {
                 authStore.user = {
-                    username: forms.value.email,
+                    username: response.data.name,
                     token: response.data.token,
+                    isMultiFactorActive: response.data.is_multi_factor_active
                 };
 
                 await authStore.saveToStorage();

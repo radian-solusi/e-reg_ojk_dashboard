@@ -8,6 +8,8 @@ import type { userlogin, formLogin } from '@composables/types';
 export const useAuthStore = defineStore('auth', () => {
     const user = ref<userlogin>({
         username: '',
+        token: '',
+        isMultiFactorActive: false,
     })
     const returnUrl = ref<string>('/');
     const isSynced = ref(false)
@@ -30,6 +32,9 @@ export const useAuthStore = defineStore('auth', () => {
 
     const isLogin = computed(() => {
         return user.value.token ? true : false
+    })
+    const isMultiFactorActive = computed(() => {
+        return user.value.isMultiFactorActive
     })
     const getToken = computed(() => {
         if (!isSynced.value) {
@@ -58,5 +63,5 @@ export const useAuthStore = defineStore('auth', () => {
     const getReturnUrl = () => {
         return returnUrl.value
     }
-    return { user, isLogin, syncFromStrorage, saveToStorage, getToken, logout, login, setReturnUrl, getReturnUrl }
+    return { user, isLogin, isMultiFactorActive, syncFromStrorage, saveToStorage, getToken, logout, login, setReturnUrl, getReturnUrl }
 })

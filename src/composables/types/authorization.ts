@@ -1,6 +1,7 @@
 export interface userlogin {
     username: string,
     token?: string,
+    isMultiFactorActive? : boolean
     expired?: string | number,
 }
 
