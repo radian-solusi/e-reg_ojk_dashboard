@@ -66,7 +66,7 @@
                         <p v-if="errors.message" class="text-red-500 text-sm text-center mb-4">
                             {{ errors.message }}
                         </p>
-                        <form class="space-y-5 dark:text-white" @submit.prevent="">
+                        <form class="space-y-5 dark:text-white" @submit.prevent="resetPassword">
                                 <div>
                                     <label for="password">{{ $t('password') }}</label>
                                     <div class="relative text-white-dark">
@@ -100,14 +100,14 @@
     </div>
 </template>
 <script lang="ts" setup>
-    import { computed, reactive, ref } from 'vue';
+    import { computed, onMounted, reactive, ref } from 'vue';
     import { useI18n } from 'vue-i18n';
     import appSetting from '@/app-setting';
     import { useAppStore, useAuthStore } from '@/stores';
     import { useRoute, useRouter } from 'vue-router';
     import { useMeta } from '@/composables/use-meta';
     import { IconCaretDown, IconMail, IconLockDots } from '@components/icon'
-    import { ErrorResponse, LoginResponse } from '@/composables/types';
+    import { ErrorResponse, LoginResponse, SuccessResponse } from '@/composables/types';
     import { fetchWrapper } from '@/composables/fetchers';
     const API_URL = import.meta.env.VITE_API_URL;
 
@@ -146,6 +146,71 @@
             message: ''
         };
     };
+
+    const verifyEmailAndToken = async () : Promise<boolean> => {
+
+        try {
+            const response = await fetchWrapper<SuccessResponse<[]>>("POST", "/ojk/auth/verify-reset-password", {
+                token: route.query?.token,
+                email: route.query?.email
+            });
+
+            if (response.success) {
+              return true
+            } else {
+                console.log("Login failed:", response.message);
+              return false
+            }
+        }
+        catch (err: unknown) {
+            const errorData = err as ErrorResponse; 
+            console.error(errorData.message)
+            return false
+        }
+    }
+
+    const resetPassword = async () => {
+        resetErrors()
+
+        try {
+            const response = await fetchWrapper<SuccessResponse<[]>>("POST", "/ojk/auth/reset-password", {
+                token: route.query?.token,
+                email: route.query?.email,
+                password: forms.value.password,
+                password_confirmation: forms.value.password_confirmation
+            });
+
+            if (response.success) {
+                router.push({ name: 'login' }); 
+            } else {
+                console.log("Login failed:", response.message);
+            }
+        }
+        catch (err: unknown) {
+            const errorData = err as ErrorResponse; 
+
+             if (errorData?.error_type === "invalid_credential"){
+                errors.value.message = errorData.data.error
+            }
+            else if (errorData?.error_type === "validation_error") {
+                const validationError = errorData.data.error
+                errors.value.password = validationError.password ? validationError.password[0] : '';
+                errors.value.password_confirmation = validationError.password_confirmation ? validationError.password_confirmation[0] : '';
+
+            }
+        }
+    }
+
+    onMounted(async () => {
+        if(!route.query || !route.query.token || !route.query.email) {
+            router.push({ name: 'login' }); 
+        }
+
+        const isVerified = await verifyEmailAndToken()
+        if (!isVerified) {
+            router.push({ name: 'login' }); 
+        }
+    })
 
   
 
