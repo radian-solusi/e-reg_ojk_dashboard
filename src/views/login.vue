@@ -88,13 +88,10 @@
                                 </div>
                             </div>
                             <div>
-                                <label class="flex cursor-pointer items-center">
-                                    <input type="checkbox" class="form-checkbox bg-white dark:bg-black" v-model="forms.remember" />
-                                    <span class="text-white-dark">{{ $t('remember_me') }}</span>
-                                </label>
+                                <checkbox v-model="forms.remember" :label="$t('remember_me')" />
                             </div>
                             
-                            <buttons as="info" size="md" block other-class="!mt-6 btn-gradient shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)] uppercase">
+                            <buttons as="primary" size="md" block other-class="text-white !mt-6 btn-gradient shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)] uppercase">
                                 {{ $t('signin') }}
                             </buttons>
                         </form>
@@ -116,7 +113,7 @@
     import { useMeta } from '@/composables/use-meta';
     import { IconCaretDown, IconMail, IconLockDots } from '@components/icon'
     import LoginOtp from '@components/pages/LoginOtp.vue';
-    import { Buttons } from "@components/elements"
+    import { Buttons, Checkbox } from "@components/elements"
 
     useMeta({ title: 'Login Page' });
     const router = useRouter();
@@ -127,6 +124,7 @@
         password: '',
         remember: false
     })
+    const loadingButton = ref(false)
     const authentication = useAuthStore();
     const showOtp = ref(false)
     const changeLanguage = (item: any) => {
@@ -142,8 +140,5 @@
         if(!state.status) {
             showOtp.value = true
         }
-    }
-    const testButton = () => {
-        alert('test')
     }
 </script>

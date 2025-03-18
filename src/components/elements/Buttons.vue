@@ -1,6 +1,10 @@
 <template>
-    <button v-bind="$attrs" class="btn" :class="classButtons">
-        <slot />
+    <button v-bind="$attrs" class="btn" :class="classButtons" :disabled="disabled || loading">
+        <slot v-if="!loading" />
+        <div v-else class="flex flex-wrap items-center justify-center w-full sm:w-1/2 text-center">
+            <span class="animate-spin border-4 border-white-light border-l-transparent rounded-full w-8 h-8 inline-block align-middle m-auto" />
+            {{ loadingText }}
+        </div>
     </button>
 </template>
 
@@ -22,6 +26,22 @@
         default: false
        },
        outline: {
+        type: Boolean,
+        default: false
+       },
+       loading: {
+        type: Boolean,
+        default: false
+       },
+       loadingText: {
+        type: String,
+        default: 'Loading'
+       },
+       rounded: {
+        type: Boolean,
+        default: false
+       },
+       disabled: {
         type: Boolean,
         default: false
        },
@@ -52,6 +72,8 @@
             'btn-sm': props.size === 'sm',
             'btn-xl': props.size === 'xl',
             'w-full': props.block,
+            'rounded-full': props.rounded,
+            'disabled:pointer-events-none disabled:opacity-60': props.disabled || props.loading,
             [props.otherClass]: props.otherClass
         }
     })
