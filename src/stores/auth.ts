@@ -42,6 +42,12 @@ export const useAuthStore = defineStore('auth', () => {
         }
         return user.value.token
     })
+    const getUsername = computed(() => {
+        if (!isSynced.value){
+            syncFromStrorage()
+        }
+        return user.value.username
+    })
     const logout = () => {
         user.value = {
             username: '',
@@ -63,5 +69,5 @@ export const useAuthStore = defineStore('auth', () => {
     const getReturnUrl = () => {
         return returnUrl.value
     }
-    return { user, isLogin, isMultiFactorActive, syncFromStrorage, saveToStorage, getToken, logout, login, setReturnUrl, getReturnUrl }
+    return { user, isLogin, isMultiFactorActive, syncFromStrorage, saveToStorage, getToken, getUsername, logout, login, setReturnUrl, getReturnUrl }
 })

@@ -178,12 +178,11 @@
                                                 <img class="rounded-md w-10 h-10 object-cover" src="/assets/images/user-profile.jpeg" alt="" />
                                             </div>
                                             <div class="ltr:pl-4 rtl:pr-4 truncate">
-                                                <!-- <h4 class="text-base">
-                                                    John Doe<span class="text-xs bg-success-light rounded text-success px-1 ltr:ml-2 rtl:ml-2">Pro</span>
-                                                </h4> -->
-                                                <a class="text-black/60 hover:text-primary dark:text-dark-light/60 dark:hover:text-white" href="javascript:;"
-                                                    >{{ user?.username }}</a
-                                                >
+                                                <h4 class="text-base">
+                                                    {{ username || "" }}
+                                                </h4>
+                                                <!-- <a class="text-black/60 hover:text-primary dark:text-dark-light/60 dark:hover:text-white" href="javascript:;"
+                                                    ></a> -->
                                             </div>
                                         </div>
                                     </li>
@@ -229,7 +228,7 @@
 
     // multi language
     const i18n = reactive(useI18n());
-    const { user } = useAuthStore()
+    const username = authStore.getUsername
     const changeLanguage = (item: any) => {
         i18n.locale = item.code;
         appSetting.toggleLanguage(item);
