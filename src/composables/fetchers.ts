@@ -3,6 +3,7 @@ import type { methodRequest } from "@composables/types";
 
 export async function fetchWrapper<T>(request: methodRequest, pathUrl: string, data?: any): Promise<T> {
     const authorization = useAuthStore();
+    await authorization.syncFromStrorage();
     const options: RequestInit = {
         method: request,
         headers: {
