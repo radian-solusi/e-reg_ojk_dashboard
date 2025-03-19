@@ -96,18 +96,6 @@
     const show2FAModal = ref(false);
     const modalShown = ref(false); 
 
-    const check2FAStatus = () => {
-        if (
-            !authStore.isMultiFactorActive && 
-            authStore.isLogin && 
-            router.currentRoute.value.path !== '/profile'
-        ) {
-            console.log('Menampilkan modal 2FA'); // Debugging
-            show2FAModal.value = true;
-            modalShown.value = true;
-        }
-    };
-
     const goToProfile = () => {
         show2FAModal.value = false;
         router.push('/profile');
@@ -127,7 +115,6 @@
                 
                 // if user hasn't active their 2fa auth, force show modal
                 if (!authStore.isMultiFactorActive && authStore.isLogin && currentPath !== '/profile') {
-                    console.log('Menampilkan modal 2FA');
                     show2FAModal.value = true;
                     modalShown.value = true;
                 }

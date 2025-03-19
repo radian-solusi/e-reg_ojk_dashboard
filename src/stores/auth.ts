@@ -60,11 +60,17 @@ export const useAuthStore = defineStore('auth', () => {
             status: true,
         }
     }
+    const activateMultiFactor = async () => {
+        user.value.isMultiFactorActive = true;
+        await saveToStorage();
+        await syncFromStorage();
+    };
+
     const setReturnUrl = (url: string) => {
         returnUrl.value = url
     }
     const getReturnUrl = () => {
         return returnUrl.value
     }
-    return { user, isLogin, isSynced, isMultiFactorActive, syncFromStorage, saveToStorage, getToken, getUsername, logout, login, setReturnUrl, getReturnUrl }
+    return { user, isLogin, isSynced, isMultiFactorActive, syncFromStorage, saveToStorage, getToken, getUsername, logout, login, activateMultiFactor, setReturnUrl, getReturnUrl }
 })
