@@ -49,7 +49,7 @@ router.beforeEach(async (to, from, next) => {
         store.setMainLayout('app');
     }
 
-    await auth.syncFromStrorage();
+    await auth.syncFromStorage();
 
     if (to.path === '/login' && auth.isLogin) {
         return next({ path: '/' });

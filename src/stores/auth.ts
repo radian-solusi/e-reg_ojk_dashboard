@@ -13,7 +13,7 @@ export const useAuthStore = defineStore('auth', () => {
     })
     const returnUrl = ref<string>('/');
     const isSynced = ref(false)
-    const syncFromStrorage = async () => {
+    const syncFromStorage = async () => {
         let auths = localStorage.getItem('auths')
         if (auths) {
             // decrypt
@@ -38,14 +38,11 @@ export const useAuthStore = defineStore('auth', () => {
     })
     const getToken = computed(() => {
         if (!isSynced.value) {
-            syncFromStrorage()
+            syncFromStorage()
         }
         return user.value.token
     })
     const getUsername = computed(() => {
-        if (!isSynced.value){
-            syncFromStrorage()
-        }
         return user.value.username
     })
     const logout = () => {
@@ -69,5 +66,5 @@ export const useAuthStore = defineStore('auth', () => {
     const getReturnUrl = () => {
         return returnUrl.value
     }
-    return { user, isLogin, isMultiFactorActive, syncFromStrorage, saveToStorage, getToken, getUsername, logout, login, setReturnUrl, getReturnUrl }
+    return { user, isLogin, isMultiFactorActive, syncFromStorage, saveToStorage, getToken, getUsername, logout, login, setReturnUrl, getReturnUrl }
 })
