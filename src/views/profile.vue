@@ -3,8 +3,8 @@
     <div class="space-y-8">
       <!-- Header -->
       <div class="space-y-2">
-        <h1 class="text-3xl font-bold text-gray-900">Keamanan Akun</h1>
-        <p class="text-gray-600">Tingkatkan keamanan akun Anda dengan autentikasi dua faktor</p>
+        <h1 class="text-3xl font-bold text-gray-900">{{ $t('account_security') }}</h1>
+        <p class="text-gray-600">{{ $t('improve_security') }}</p>
       </div>
 
       <!-- 2FA Status -->
@@ -14,7 +14,7 @@
           <svg class="w-5 h-5 text-green-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
           </svg>
-          <span class="text-sm font-medium text-green-700">Autentikasi Dua Faktor Aktif</span>
+          <span class="text-sm font-medium text-green-700">{{ $t('2fa_active') }}</span>
         </div>
 
         <!-- Warning Alert -->
@@ -23,7 +23,7 @@
             <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
           </svg>
           <div class="text-sm text-yellow-700">
-            Pastikan Anda telah menyimpan kode recovery di tempat yang aman dan sudah memindai QR Code
+            {{ $t('2fa_warning') }}
           </div>
         </div>
 
@@ -33,113 +33,54 @@
             @click="handleShowTwoFactorInfo"
             class="flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
           >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h4M4 8h16M4 4h16"/>
-            </svg>
-            {{ showCodes ? 'Sembunyikan Detail' : 'Tampilkan Detail Autentikasi' }}
+            <span>{{ showCodes ? $t('hide_details') : $t('show_details') }}</span>
           </button>
         </div>
 
         <!-- QR and Recovery Codes Section -->
         <div v-if="showCodes" class="space-y-8">
-          <!-- QR Code Section -->
           <div class="text-center space-y-4">
             <div class="mx-auto w-64 h-64 bg-white p-4 rounded-xl shadow-sm">
               <div v-html="qrCode" class="w-full h-full"></div>
             </div>
-            <p class="text-sm text-gray-600">Scan QR code menggunakan aplikasi autentikator seperti Google Authenticator</p>
+            <p class="text-sm text-gray-600">{{ $t('scan_qr') }}</p>
           </div>
 
           <!-- OTP Verification Section -->
           <div class="max-w-md mx-auto space-y-4">
             <div class="space-y-2">
-              <label class="block text-sm font-medium text-gray-700">Verifikasi Kode OTP</label>
+              <label class="block text-sm font-medium text-gray-700">{{ $t('verify_otp') }}</label>
               <form class="flex gap-2" @submit.prevent="verifyMultiFactorCode">
-                <input
-                  v-model="otpCode"
-                  type="text"
-                  inputmode="numeric"
-                  pattern="[0-9]*"
-                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-400"
-                  placeholder="Masukkan 6-digit kode"
-                  maxlength="6"
-                />
-                <button
-                  type="submit"
-                  class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors whitespace-nowrap"
-                >
-                  Verifikasi
+                <input v-model="otpCode" type="text" inputmode="numeric" pattern="[0-9]*" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-400" :placeholder="$t('enter_otp')" maxlength="6"/>
+                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                  {{ $t('verify') }}
                 </button>
               </form>
-            </div>
-
-            <!-- Feedback Section -->
-            <div v-if="otpFeedback" class="mt-2">
-              <div
-                class="p-3 rounded-lg flex items-center gap-2 transition-all duration-300"
-                :class="{
-                  'bg-green-50 text-green-700': otpFeedback.type === 'success',
-                  'bg-red-50 text-red-700': otpFeedback.type === 'error'
-                }"
-              >
-                <svg
-                  v-if="otpFeedback.type === 'success'"
-                  class="w-5 h-5 flex-shrink-0"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                </svg>
-                <svg
-                  v-else-if="otpFeedback.type === 'error'"
-                  class="w-5 h-5 flex-shrink-0"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-                <span class="text-sm">{{ otpFeedback.message }}</span>
-              </div>
             </div>
           </div>
 
           <!-- Recovery Codes Section -->
           <div class="space-y-4">
             <div class="bg-gray-50 p-4 rounded-lg">
-              <h3 class="text-lg font-semibold text-gray-800 mb-3">Kode Recovery</h3>
+              <h3 class="text-lg font-semibold text-gray-800 mb-3">{{ $t('recovery_codes') }}</h3>
               <div class="grid grid-cols-2 gap-2 font-mono text-sm">
-                <div
-                  v-for="(code, index) in recoveryCodes"
-                  :key="index"
-                  class="p-2.5 bg-white rounded-md text-center border border-gray-100"
-                >
+                <div v-for="(code, index) in recoveryCodes" :key="index" class="p-2.5 bg-white rounded-md text-center border border-gray-100">
                   {{ code }}
                 </div>
               </div>
-              <p class="text-sm text-gray-500 mt-4">
-                * Simpan kode-kode ini di tempat aman. Setiap kode hanya bisa digunakan sekali.
-              </p>
+              <p class="text-sm text-gray-500 mt-4">{{ $t('save_recovery_codes') }}</p>
             </div>
           </div>
         </div>
       </div>
 
       <!-- Activation Button -->
-      <button 
-        v-else
-        @click="activateTwoFactor"
-        class="w-full md:w-auto px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 justify-center"
-      >
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-        </svg>
-        Aktifkan Autentikasi Dua Faktor
+      <button v-else @click="activateTwoFactor" class="w-full md:w-auto px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+        {{ $t('activate_2fa') }}
       </button>
     </div>
   </div>
-  </template>
+</template>
   
   <script lang="ts" setup>
   import { onMounted, ref, computed } from "vue";

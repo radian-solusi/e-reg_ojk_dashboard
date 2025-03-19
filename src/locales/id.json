@@ -15,6 +15,23 @@
     "menu": "Menu",
     "otp_authenticator": "Silakan luncurkan Aplikasi Authenticator dan masukkan kodenya", 
     "otp_label": "Kode Autentikasi",
-    "placeholder_otp": "Masukkan kode autentikasi dari aplikasi Anda"
+    "placeholder_otp": "Masukkan kode autentikasi dari aplikasi Anda",
+    "modal_title_attention": "Perhatian",
+    "modal_2fa_warning": "⚠️ Autentikasi Dua Faktor Belum Aktif!",
+    "modal_2fa_message": "Untuk keamanan akun yang lebih baik, silakan aktifkan autentikasi dua faktor di halaman profil Anda.",
+    "go_to_profile": "Ke Halaman Profil",
+    "account_security": "Keamanan Akun",
+    "improve_security": "Tingkatkan keamanan akun Anda dengan autentikasi dua faktor",
+    "2fa_active": "Autentikasi Dua Faktor Aktif",
+    "2fa_warning": "Pastikan Anda telah menyimpan kode pemulihan di tempat yang aman dan sudah memindai QR Code",
+    "show_details": "Tampilkan Detail Autentikasi",
+    "hide_details": "Sembunyikan Detail",
+    "scan_qr": "Pindai kode QR menggunakan aplikasi autentikator seperti Google Authenticator",
+    "verify_otp": "Verifikasi Kode OTP",
+    "enter_otp": "Masukkan 6-digit kode",
+    "verify": "Verifikasi",
+    "recovery_codes": "Kode Pemulihan",
+    "save_recovery_codes": "* Simpan kode-kode ini di tempat aman. Setiap kode hanya bisa digunakan sekali.",
+    "activate_2fa": "Aktifkan Autentikasi Dua Faktor"
     
 }

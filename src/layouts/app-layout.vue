@@ -60,18 +60,18 @@
     </div>
 
     <!-- modal if ojk user has not yet active their 2fa auth -->
-    <Modal v-model="show2FAModal" :isBackgroundClose=false :title="'Perhatian'" :size="'md'">
+    <Modal v-model="show2FAModal" :isBackgroundClose="false" :title="$t('modal_title_attention')" :size="'md'">
         <div class="text-center p-5">
-        <div class="text-2xl mb-4">⚠️ Autentikasi Dua Faktor Belum Aktif!</div>
-        <p class="text-gray-600 dark:text-gray-400 mb-6">
-            Untuk keamanan akun yang lebih baik, silakan aktifkan autentikasi dua faktor di halaman profil Anda.
-        </p>
-        <button 
-            @click="goToProfile" 
-            class="btn btn-primary mx-1"
-        >
-            Ke Halaman Profil
-        </button>
+            <div class="text-2xl mb-4">{{ $t('modal_2fa_warning') }}</div>
+            <p class="text-gray-600 dark:text-gray-400 mb-6">
+                {{ $t('modal_2fa_message') }}
+            </p>
+            <button 
+                @click="goToProfile" 
+                class="btn btn-primary mx-1"
+            >
+                {{ $t('go_to_profile') }}
+            </button>
         </div>
     </Modal>
    
