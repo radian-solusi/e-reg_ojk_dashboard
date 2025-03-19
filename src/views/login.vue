@@ -133,8 +133,9 @@
     import { useMeta } from '@/composables/use-meta';
     import { IconCaretDown, IconMail, IconLockDots } from '@components/icon'
     import { ErrorResponse, LoginResponse } from '@/composables/types';
-import { fetchWrapper } from '@/composables/fetchers';
-    const API_URL = import.meta.env.VITE_API_URL;
+    import { fetchWrapper } from '@/composables/fetchers';
+    import LoginOtp from '@components/pages/LoginOtp.vue';
+    import { Buttons, Checkbox } from "@components/elements"
 
     useMeta({ title: 'Login Page' });
     const router = useRouter();
@@ -156,6 +157,9 @@ import { fetchWrapper } from '@/composables/fetchers';
     const requireOtp = ref(false);
 
 
+    const loadingButton = ref(false)
+    const authentication = useAuthStore();
+    const showOtp = ref(false)
     const changeLanguage = (item: any) => {
         i18n.locale = item.code;
         appSetting.toggleLanguage(item);
