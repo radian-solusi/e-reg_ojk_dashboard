@@ -179,7 +179,7 @@
                                             </div>
                                             <div class="ltr:pl-4 rtl:pr-4 truncate">
                                                 <h4 class="text-base">
-                                                    {{ username || "" }}
+                                                    {{ authStore.getUsername }}
                                                 </h4>
                                                 <!-- <a class="text-black/60 hover:text-primary dark:text-dark-light/60 dark:hover:text-white" href="javascript:;"
                                                     ></a> -->
@@ -230,7 +230,6 @@
 
     // multi language
     const i18n = reactive(useI18n());
-    const username = authStore.getUsername
     const changeLanguage = (item: any) => {
         i18n.locale = item.code;
         appSetting.toggleLanguage(item);

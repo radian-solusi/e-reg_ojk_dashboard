@@ -59,17 +59,19 @@
     </div>
 </template>
 <script setup lang="ts">
-    import { ref, onMounted } from 'vue';
+    import { ref, onMounted, computed } from 'vue';
     import Sidebar from '@components/layout/Sidebar.vue';
     import Header from '@components/layout/Header.vue';
     import Footer from '@components/layout/Footer.vue';
     import Setting from '@components/ThemeCustomizer.vue';
     import ScreenLoader from '@components/ScreenLoader.vue';
     import appSetting from '@/app-setting';
-
-    import { useAppStore } from "@stores";
+    import { useAppStore, useAuthStore } from "@stores";
+    
     const store = useAppStore();
+    const authStore = useAuthStore();
     const showTopButton = ref(false);
+
     onMounted(() => {
         window.onscroll = () => {
             if (document.body.scrollTop > 50 || document.documentElement.scrollTop > 50) {
@@ -83,6 +85,7 @@
         eleanimation.addEventListener('animationend', function () {
             appSetting.changeAnimation('remove');
         });
+        
         store.toggleMainLoader();
     });
 
