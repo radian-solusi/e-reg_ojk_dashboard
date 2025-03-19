@@ -20,7 +20,7 @@
                     </a>
                 </div>
                 <div class="ltr:mr-2 rtl:ml-2 hidden sm:block">
-                    
+                    <breadcrumbs />
                 </div>
                 <div
                     class="sm:flex-1 ltr:sm:ml-0 ltr:ml-auto sm:rtl:mr-0 rtl:mr-auto flex items-center space-x-1.5 lg:space-x-2 rtl:space-x-reverse dark:text-[#d0d2d6]"
@@ -195,11 +195,11 @@
                                         </router-link>
                                     </li>
                                     <li class="border-t border-white-light dark:border-white-light/10">
-                                        <router-link to="/auth/boxed-signin" class="text-danger !py-3" @click="close()">
+                                        <button class="text-danger !py-3" @click="Logout">
                                             <icon-logout class="w-4.5 h-4.5 ltr:mr-2 rtl:ml-2 rotate-90 shrink-0" />
 
                                             Sign Out
-                                        </router-link>
+                                        </button>
                                     </li>
                                 </ul>
                             </template>
@@ -218,14 +218,15 @@
     import appSetting from '@/app-setting';
 
     import { useRoute } from 'vue-router';
-    import { useAppStore } from '@stores';
+    import { useAppStore, useAuthStore } from '@stores';
 
+    import { Breadcrumbs } from '@components/elements';
     import { IconMenu, IconXCircle, IconSun, IconMoon, IconLaptop, IconArrowLeft, IconInfoCircle, IconBellBing, IconUser, IconMail, IconLogout } from '@components/icon';
 
     const store = useAppStore();
     const route = useRoute();
     const search = ref(false);
-
+    const user = useAuthStore();
     // multi language
     const i18n = reactive(useI18n());
     const changeLanguage = (item: any) => {
@@ -235,7 +236,9 @@
     const currentFlag = computed(() => {
         return `/assets/images/flags/${i18n.locale.toUpperCase()}.svg`;
     });
-
+    const Logout = () => {
+        user.logout();
+    }
     const notifications = ref([
         {
             id: 1,

@@ -14,13 +14,10 @@
     import authLayout from '@layouts/auth-layout.vue';
 
     import { useAppStore } from '@stores';
-    import { useMeta } from '@composables/use-meta';
 
     const store = useAppStore();
 
     // meta
-    useMeta({ title: 'Sales Admin' });
-
     const mainLayout = computed(() => {
         return store.mainLayout === 'auth' ? authLayout : appLayout;
     });

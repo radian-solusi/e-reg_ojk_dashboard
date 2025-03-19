@@ -70,22 +70,18 @@
                         </div>
                         <form v-if="!showOtp" class="space-y-5 dark:text-white" @submit.prevent="processLogin">
                             <div>
-                                <label for="Email">{{ $t('email') }}</label>
-                                <div class="relative text-white-dark">
-                                    <input id="Email" type="email" :placeholder="$t('placeholder_email')" class="form-input ps-10 placeholder:text-white-dark" v-model="forms.email" />
-                                    <span class="absolute start-4 top-1/2 -translate-y-1/2">
+                                <input-group type="email" :title="$t('email')" :placeholder="$t('placeholder_email')" class="form-input ps-10 placeholder:text-white-dark" v-model="forms.email">
+                                    <template #icon>
                                         <icon-mail :fill="true" />
-                                    </span>
-                                </div>
+                                    </template>
+                                </input-group>
                             </div>
                             <div>
-                                <label for="Password">{{ $t('password') }}</label>
-                                <div class="relative text-white-dark">
-                                    <input id="Password" type="password" :placeholder="$t('placeholder_password')" class="form-input ps-10 placeholder:text-white-dark" v-model="forms.password" />
-                                    <span class="absolute start-4 top-1/2 -translate-y-1/2">
+                                <input-group type="password" :title="$t('password')" :placeholder="$t('placeholder_password')" class="form-input ps-10 placeholder:text-white-dark" v-model="forms.password">
+                                    <template #icon>
                                         <icon-lock-dots :fill="true" />
-                                    </span>
-                                </div>
+                                    </template>
+                                </input-group>
                             </div>
                             <div>
                                 <checkbox v-model="forms.remember" :label="$t('remember_me')" />
@@ -113,7 +109,7 @@
     import { useMeta } from '@/composables/use-meta';
     import { IconCaretDown, IconMail, IconLockDots } from '@components/icon'
     import LoginOtp from '@components/pages/LoginOtp.vue';
-    import { Buttons, Checkbox } from "@components/elements"
+    import { Buttons, Checkbox, InputGroup } from "@components/elements"
 
     useMeta({ title: 'Login Page' });
     const router = useRouter();

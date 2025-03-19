@@ -20,6 +20,12 @@ export const useAuthStore = defineStore('auth', () => {
         }
         isSynced.value = true;
     }
+    const getUser = computed(() => {
+        if (!isSynced.value) {
+            syncFromStrorage()
+        }
+        return user
+    })
     
     const saveToStorage = async () => {
         // encrypt
@@ -58,5 +64,5 @@ export const useAuthStore = defineStore('auth', () => {
     const getReturnUrl = () => {
         return returnUrl.value
     }
-    return { isLogin, getToken, logout, login, setReturnUrl, getReturnUrl }
+    return { isLogin, getToken, getUser, logout, login, setReturnUrl, getReturnUrl }
 })
