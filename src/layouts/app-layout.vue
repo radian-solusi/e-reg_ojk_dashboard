@@ -56,21 +56,86 @@
                 <!-- END FOOTER -->
             </div>
         </div>
+        
     </div>
+
+    <!-- modal if ojk user has not yet active their 2fa auth -->
+    <Modal v-model="show2FAModal" :isBackgroundClose=false :title="'Perhatian'" :size="'md'">
+        <div class="text-center p-5">
+        <div class="text-2xl mb-4">⚠️ Autentikasi Dua Faktor Belum Aktif!</div>
+        <p class="text-gray-600 dark:text-gray-400 mb-6">
+            Untuk keamanan akun yang lebih baik, silakan aktifkan autentikasi dua faktor di halaman profil Anda.
+        </p>
+        <button 
+            @click="goToProfile" 
+            class="btn btn-primary mx-1"
+        >
+            Ke Halaman Profil
+        </button>
+        </div>
+    </Modal>
+   
 </template>
 <script setup lang="ts">
-    import { ref, onMounted, computed } from 'vue';
+    import { ref, onMounted, watch } from 'vue';
     import Sidebar from '@components/layout/Sidebar.vue';
     import Header from '@components/layout/Header.vue';
     import Footer from '@components/layout/Footer.vue';
     import Setting from '@components/ThemeCustomizer.vue';
     import ScreenLoader from '@components/ScreenLoader.vue';
+    import { Modal } from '@/components/elements';
     import appSetting from '@/app-setting';
     import { useAppStore, useAuthStore } from "@stores";
+    import { useRouter } from 'vue-router';
     
+    const router = useRouter();
     const store = useAppStore();
     const authStore = useAuthStore();
     const showTopButton = ref(false);
+
+    const show2FAModal = ref(false);
+    const modalShown = ref(false); 
+
+    const check2FAStatus = () => {
+        if (
+            !authStore.isMultiFactorActive && 
+            authStore.isLogin && 
+            router.currentRoute.value.path !== '/profile'
+        ) {
+            console.log('Menampilkan modal 2FA'); // Debugging
+            show2FAModal.value = true;
+            modalShown.value = true;
+        }
+    };
+
+    const goToProfile = () => {
+        show2FAModal.value = false;
+        router.push('/profile');
+    };
+
+
+    // watch isSynced from authStore and current route path
+    watch(
+        [() => authStore.isSynced, () => router.currentRoute.value.path],
+        ([synced, currentPath]) => {
+            if (synced) {
+                
+                // reset modal state
+                if (currentPath !== '/profile') {
+                    modalShown.value = false;
+                }
+                
+                // if user hasn't active their 2fa auth, force show modal
+                if (!authStore.isMultiFactorActive && authStore.isLogin && currentPath !== '/profile') {
+                    console.log('Menampilkan modal 2FA');
+                    show2FAModal.value = true;
+                    modalShown.value = true;
+                }
+            }
+        },
+        { immediate: true }
+    );
+
 
     onMounted(() => {
         window.onscroll = () => {
