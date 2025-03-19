@@ -220,6 +220,8 @@
     import { useAppStore, useAuthStore } from '@stores';
 
     import { IconMenu, IconXCircle, IconSun, IconMoon, IconLaptop, IconArrowLeft, IconInfoCircle, IconBellBing, IconUser, IconMail, IconLogout } from '@components/icon';
+    import { fetchWrapper } from '@/composables/fetchers';
+    import { ErrorResponse, SuccessResponse } from '@/composables/types';
 
     const store = useAppStore();
     const authStore = useAuthStore();
@@ -297,8 +299,26 @@
         setActiveDropdown();
     });
 
-    const handleLogout = () => {
-        authStore.logout();
+    const userLogout = async () => {
+
+        try {
+            const response = await fetchWrapper<SuccessResponse<[]>>("POST", "/ojk/auth/logout");
+
+            if (response.success) {
+
+                authStore.logout();
+            } else {
+                console.log("logout failed:", response.message);
+            }
+        }
+        catch (err: unknown) {
+            const errorData = err as ErrorResponse; 
+            console.error(errorData.message)
+        }
+    }
+
+    const handleLogout = async () => {
+        await userLogout()
     };
 
     const setActiveDropdown = () => {
