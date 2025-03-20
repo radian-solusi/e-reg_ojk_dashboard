@@ -4,7 +4,7 @@
             <div class="bg-white dark:bg-[#0e1726] h-full">
                 <div class="flex justify-between items-center px-4 py-3">
                     <router-link to="/" class="main-logo flex items-center shrink-0">
-                        <img class="w-32 bg-cover flex-none" src="/assets/images/ojk.png" alt="" />
+                        <img class="w-32 bg-cover flex-none" src="/assets/images/logo.png" alt="" />
                     </router-link>
                     <a
                         href="javascript:;"

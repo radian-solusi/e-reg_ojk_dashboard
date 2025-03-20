@@ -57,12 +57,11 @@
                     </div>
                     <div class="mx-auto w-full max-w-[440px]">
                         <div class="mb-3">
-                            <div class="grid grid-cols-1 gap-4 items-center">
-                                <div class="w-full h-[10%] -mt-[120%] md:-mt-[150%]">
-                                    <img src="/assets/images/ojk.svg" alt="" class="w-full" />
+                            <div class="grid grid-cols-1 gap-4 space-y-3 items-center">
+                                <div class="pl-0 md:pl-4 w-[80%] h-[20%] mb-2 -mt-[70%] text-center">
+                                    <img src="/assets/images/logo.png" alt="" class="w-full" />
                                 </div>
                                 <div class="w-full">
-                                    <h1 class="text-3xl font-extrabold uppercase !leading-snug text-primary md:text-4xl">OJK Dashboard</h1>
                                     <p v-if="!showOtp" class="text-base font-bold leading-normal text-white-dark">{{ $t('enter_credential') }}</p>
                                     <p v-else class="text-base font-bold leading-normal text-white-dark">{{ $t('otp_authenticator') }}</p>
                                 </div>

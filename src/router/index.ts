@@ -38,10 +38,10 @@ router.beforeEach((to, from, next) => {
         store.setMainLayout('app');
     }
 
-    if (authRequired && !auth.isLogin) {
+    /* if (authRequired && !auth.isLogin) {
         auth.setReturnUrl(to.fullPath);
         return next({path: '/login'});
-    }
+    } */
 
     next(true);
 });
