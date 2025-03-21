@@ -1,13 +1,13 @@
 import { SuccessResponse } from "./response";
 
-export interface LoginSuccess {
+interface LoginSuccess {
     require_otp: false;
     token: string;
     name: string;
     is_multi_factor_active: boolean;
 }
 
-export interface LoginRequiresOTP {
+interface LoginRequiresOTP {
     require_otp: true;
     user_email: string;
 }
