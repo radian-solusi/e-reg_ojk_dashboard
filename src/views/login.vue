@@ -71,7 +71,7 @@
                                 <div>
                                     <label for="otp">{{ $t('otp_label') }}</label>
                                     <div class="relative text-white-dark">
-                                        <input id="otp" type="text" :placeholder="$t('placeholder_otp')" class="form-input ps-10 placeholder:text-white-dark" v-model="forms.otp" />
+                                        <Input id="otp" type="text" :placeholder="$t('placeholder_otp')" class="form-input ps-10 placeholder:text-white-dark" v-model="forms.otp" />
                                         <span class="absolute start-4 top-1/2 -translate-y-1/2">
                                             <icon-lock-dots :fill="true" />
                                         </span>
@@ -88,7 +88,7 @@
                                 <div>
                                     <label for="Email">{{ $t('email') }}</label>
                                     <div class="relative text-white-dark">
-                                        <input id="Email" type="email" :placeholder="$t('placeholder_email')" class="form-input ps-10 placeholder:text-white-dark" v-model="forms.email" />
+                                        <Input id="Email" type="email" v-model="forms.email" :placeholder="$t('placeholder_email')"  class="form-input ps-10 placeholder:text-white-dark"/>
                                         <span class="absolute start-4 top-1/2 -translate-y-1/2">
                                             <icon-mail :fill="true" />
                                         </span>
@@ -98,7 +98,7 @@
                                 <div>
                                     <label for="Password">{{ $t('password') }}</label>
                                     <div class="relative text-white-dark">
-                                        <input id="Password" type="password" :placeholder="$t('placeholder_password')" class="form-input ps-10 placeholder:text-white-dark" v-model="forms.password" />
+                                        <Input id="Password" type="password" :placeholder="$t('placeholder_password')" class="form-input ps-10 placeholder:text-white-dark" v-model="forms.password" />
                                         <span class="absolute start-4 top-1/2 -translate-y-1/2">
                                             <icon-lock-dots :fill="true" />
                                         </span>
@@ -112,9 +112,14 @@
                                         <span class="text-white-dark">{{ $t('remember_me') }}</span>
                                     </label>
                                 </div>
-                                <button type="submit" class="btn btn-primary btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]">
+                                <Buttons 
+                                    as="primary" 
+                                    block 
+                                    :loading="loadingButton"
+                                    otherClass="!mt-6 border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)] text-white"
+                                >
                                     {{ $t('signin') }}
-                                </button>
+                                </Buttons>
                             </form>
                         </div>
                        
@@ -135,7 +140,8 @@
     import { ErrorResponse, LoginResponse } from '@/composables/types';
     import { fetchWrapper } from '@/composables/fetchers';
     import LoginOtp from '@components/pages/LoginOtp.vue';
-    import { Buttons, Checkbox } from "@components/elements"
+    import { Buttons, Input } from "@components/elements"
+    import { useTimeFormatter } from '@/composables/use-time-formatter';
 
     useMeta({ title: 'Login Page' });
     const router = useRouter();
@@ -160,6 +166,7 @@
     const loadingButton = ref(false)
     const authentication = useAuthStore();
     const showOtp = ref(false)
+    const {formatBlockedTime} = useTimeFormatter()
     const changeLanguage = (item: any) => {
         i18n.locale = item.code;
         appSetting.toggleLanguage(item);
@@ -179,11 +186,11 @@
 
     const verifyUser = async () => {
         resetErrors()
+        loadingButton.value = true;
 
         try {
             const response = await fetchWrapper<LoginResponse>("POST", "/ojk/auth/login", forms.value)
     
-            console.log(response)
             if (response.success) {
                 if (!response.data.require_otp) {
                     authStore.user = {
@@ -205,8 +212,11 @@
         catch (err: unknown) {
             const errorData = err as ErrorResponse; 
             
-            if (errorData?.error_type === "invalid_credential" || errorData?.error_type === "too_many_request"){
+            if (errorData?.error_type === "invalid_credential" ){
                 errors.value.message = "invalid credentials"
+            }
+            else if ( errorData?.error_type === "too_many_request") {
+                errors.value.message = errorData?.data.blocked_until ? `Akun anda telah diblokir, silahkan coba lagi dalam ${formatBlockedTime(errorData.data.blocked_until)}` : "Akun Anda telah diblokir untuk sementara waktu"
             }
             else if (errorData?.error_type === "validation_error") {
                 const validationError = errorData.data.error
@@ -215,10 +225,15 @@
             }
            
         }
+        finally {
+            loadingButton.value = false
+        }
+        
     }
 
     const verifyOtp = async () => {
         resetErrors()
+        loadingButton.value = true;
 
         try {
             const response = await fetchWrapper<LoginResponse>("POST", "/ojk/auth/verify-otp", forms.value);
@@ -247,6 +262,9 @@
                 const validationError = errorData.data.error
                 errors.value.otp = validationError.otp ? validationError.otp[0] : '';
             }
+        }
+        finally {
+            loadingButton.value = false;
         }
     }
 </script>

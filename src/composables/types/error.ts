@@ -14,7 +14,7 @@ interface TooManyAttemptErrorResponse {
     error_type: "too_many_request",
     data: {
         error : string
-        blocked_until : string
+        blocked_until : number
     }
 }
 
