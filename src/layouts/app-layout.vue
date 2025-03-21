@@ -56,20 +56,74 @@
                 <!-- END FOOTER -->
             </div>
         </div>
+        
     </div>
+
+    <!-- modal if ojk user has not yet active their 2fa auth -->
+    <Modal v-model="show2FAModal" :isBackgroundClose="false" :title="$t('modal_title_attention')" :size="'md'">
+        <div class="text-center p-5">
+            <div class="text-2xl mb-4">{{ $t('modal_2fa_warning') }}</div>
+            <p class="text-gray-600 dark:text-gray-400 mb-6">
+                {{ $t('modal_2fa_message') }}
+            </p>
+            <button 
+                @click="goToProfile" 
+                class="btn btn-primary mx-1"
+            >
+                {{ $t('go_to_profile') }}
+            </button>
+        </div>
+    </Modal>
+   
 </template>
 <script setup lang="ts">
-    import { ref, onMounted } from 'vue';
+    import { ref, onMounted, watch } from 'vue';
     import Sidebar from '@components/layout/Sidebar.vue';
     import Header from '@components/layout/Header.vue';
     import Footer from '@components/layout/Footer.vue';
     import Setting from '@components/ThemeCustomizer.vue';
     import ScreenLoader from '@components/ScreenLoader.vue';
+    import { Modal } from '@/components/elements';
     import appSetting from '@/app-setting';
-
-    import { useAppStore } from "@stores";
+    import { useAppStore, useAuthStore } from "@stores";
+    import { useRouter } from 'vue-router';
+    
+    const router = useRouter();
     const store = useAppStore();
+    const authStore = useAuthStore();
     const showTopButton = ref(false);
+
+    const show2FAModal = ref(false);
+    const modalShown = ref(false); 
+
+    const goToProfile = () => {
+        show2FAModal.value = false;
+        router.push('/profile');
+    };
+
+
+    // watch isSynced from authStore and current route path
+    watch(
+        [() => authStore.isSynced, () => router.currentRoute.value.path],
+        ([synced, currentPath]) => {
+            if (synced) {
+                
+                // reset modal state
+                if (currentPath !== '/profile') {
+                    modalShown.value = false;
+                }
+                
+                // if user hasn't active their 2fa auth, force show modal
+                if (!authStore.isMultiFactorActive && authStore.isLogin && currentPath !== '/profile') {
+                    show2FAModal.value = true;
+                    modalShown.value = true;
+                }
+            }
+        },
+        { immediate: true }
+    );
+
+
     onMounted(() => {
         window.onscroll = () => {
             if (document.body.scrollTop > 50 || document.documentElement.scrollTop > 50) {
@@ -83,6 +137,7 @@
         eleanimation.addEventListener('animationend', function () {
             appSetting.changeAnimation('remove');
         });
+        
         store.toggleMainLoader();
     });
 

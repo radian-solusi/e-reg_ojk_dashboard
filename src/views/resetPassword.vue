@@ -66,62 +66,32 @@
                         <p v-if="errors.message" class="text-red-500 text-sm text-center mb-4">
                             {{ errors.message }}
                         </p>
-                        <div v-if="requireOtp">
-                            <form class="space-y-5 dark:text-white" @submit.prevent="verifyOtp">
+                        <form class="space-y-5 dark:text-white" @submit.prevent="resetPassword">
                                 <div>
-                                    <label for="otp">{{ $t('otp_label') }}</label>
+                                    <label for="password">{{ $t('password') }}</label>
                                     <div class="relative text-white-dark">
-                                        <Input id="otp" type="text" :placeholder="$t('placeholder_otp')" class="form-input ps-10 placeholder:text-white-dark" v-model="forms.otp" />
-                                        <span class="absolute start-4 top-1/2 -translate-y-1/2">
-                                            <icon-lock-dots :fill="true" />
-                                        </span>
-                                    </div>
-                                    <p v-if="errors.otp" class="text-red-500 text-sm">{{ errors.otp }}</p>
-                                </div>
-                                <button type="submit" class="btn btn-primary btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]">
-                                    {{ $t('signin') }}
-                                </button>
-                            </form>
-                        </div>
-                        <div v-else>
-                            <form class="space-y-5 dark:text-white" @submit.prevent="verifyUser">
-                                <div>
-                                    <label for="Email">{{ $t('email') }}</label>
-                                    <div class="relative text-white-dark">
-                                        <Input id="Email" type="email" v-model="forms.email" :placeholder="$t('placeholder_email')"  class="form-input ps-10 placeholder:text-white-dark"/>
+                                        <input id="password" type="password" :placeholder="$t('placeholder_password')" class="form-input ps-10 placeholder:text-white-dark" v-model="forms.password" />
                                         <span class="absolute start-4 top-1/2 -translate-y-1/2">
                                             <icon-mail :fill="true" />
                                         </span>
                                     </div>
-                                    <p v-if="errors.email" class="text-red-500 text-sm">{{ errors.email }}</p>
+                                    <p v-if="errors.password" class="text-red-500 text-sm">{{ errors.password }}</p>
                                 </div>
                                 <div>
-                                    <label for="Password">{{ $t('password') }}</label>
+                                    <label for="password_confirmation">{{ $t('password_confirmation') }}</label>
                                     <div class="relative text-white-dark">
-                                        <Input id="Password" type="password" :placeholder="$t('placeholder_password')" class="form-input ps-10 placeholder:text-white-dark" v-model="forms.password" />
+                                        <input id="password_confirmation" type="password" :placeholder="$t('placeholder_password_confirmation')" class="form-input ps-10 placeholder:text-white-dark" v-model="forms.password_confirmation" />
                                         <span class="absolute start-4 top-1/2 -translate-y-1/2">
                                             <icon-lock-dots :fill="true" />
                                         </span>
                                     </div>
-                                    <p v-if="errors.password" class="text-red-500 text-sm">{{ errors.password }}</p>
+                                    <p v-if="errors.password_confirmation" class="text-red-500 text-sm">{{ errors.password_confirmation }}</p>
 
                                 </div>
-                                <div>
-                                    <label class="flex cursor-pointer items-center">
-                                        <input type="checkbox" class="form-checkbox bg-white dark:bg-black" v-model="forms.remember" />
-                                        <span class="text-white-dark">{{ $t('remember_me') }}</span>
-                                    </label>
-                                </div>
-                                <Buttons 
-                                    as="primary" 
-                                    block 
-                                    :loading="loadingButton"
-                                    otherClass="!mt-6 border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)] text-white"
-                                >
-                                    {{ $t('signin') }}
-                                </Buttons>
-                            </form>
-                        </div>
+                                <button type="submit" class="btn btn-primary btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]">
+                                    {{ $t('save') }}
+                                </button>
+                        </form>
                        
                     </div>
                 </div>
@@ -130,43 +100,35 @@
     </div>
 </template>
 <script lang="ts" setup>
-    import { computed, reactive, ref } from 'vue';
+    import { computed, onMounted, reactive, ref } from 'vue';
     import { useI18n } from 'vue-i18n';
     import appSetting from '@/app-setting';
     import { useAppStore, useAuthStore } from '@/stores';
-    import { useRouter } from 'vue-router';
+    import { useRoute, useRouter } from 'vue-router';
     import { useMeta } from '@/composables/use-meta';
     import { IconCaretDown, IconMail, IconLockDots } from '@components/icon'
-    import { ErrorResponse, LoginResponse } from '@/composables/types';
+    import { ErrorResponse, SuccessResponse } from '@/composables/types';
     import { fetchWrapper } from '@/composables/fetchers';
-    import LoginOtp from '@components/pages/LoginOtp.vue';
-    import { Buttons, Input } from "@components/elements"
-    import { useTimeFormatter } from '@/composables/use-time-formatter';
+    const API_URL = import.meta.env.VITE_API_URL;
 
     useMeta({ title: 'Login Page' });
     const router = useRouter();
+    const route = useRoute();
     const store = useAppStore();
     const authStore = useAuthStore(); 
     const i18n = reactive(useI18n());
     const forms = ref({
-        email: '',
         password: '',
-        remember: false,
-        otp: ""
+        password_confirmation: '',
+
     })
     const errors = ref({
-        email: '',
         password: '',
-        message: '',
-        otp: ""
+        password_confirmation: '',
+        message: ''
     });
-    const requireOtp = ref(false);
 
 
-    const loadingButton = ref(false)
-    const authentication = useAuthStore();
-    const showOtp = ref(false)
-    const {formatBlockedTime} = useTimeFormatter()
     const changeLanguage = (item: any) => {
         i18n.locale = item.code;
         appSetting.toggleLanguage(item);
@@ -177,94 +139,78 @@
 
     const resetErrors = () => {
         errors.value = {
-            email: '',
             password: '',
-            message: '',
-            otp: ''
+            password_confirmation: '',
+            message: ''
         };
     };
 
-    const verifyUser = async () => {
-        resetErrors()
-        loadingButton.value = true;
+    const verifyEmailAndToken = async () : Promise<boolean> => {
 
         try {
-            const response = await fetchWrapper<LoginResponse>("POST", "/ojk/auth/login", forms.value)
-    
+            const response = await fetchWrapper<SuccessResponse<[]>>("POST", "/ojk/auth/verify-reset-password", {
+                token: route.query?.token,
+                email: route.query?.email
+            });
+
             if (response.success) {
-                if (!response.data.require_otp) {
-                    authStore.user = {
-                    username: response.data.name,
-                    token: response.data.token,
-                    isMultiFactorActive: response.data.is_multi_factor_active
-                     };
-
-                    await authStore.saveToStorage();
-                    router.push({ name: 'home' }); 
-                }
-                else if (response.data.require_otp) {
-                    requireOtp.value = true;
-                } 
+              return true
             } else {
                 console.log("Login failed:", response.message);
+              return false
             }
         }
         catch (err: unknown) {
             const errorData = err as ErrorResponse; 
-            
-            if (errorData?.error_type === "invalid_credential" ){
-                errors.value.message = "invalid credentials"
-            }
-            else if ( errorData?.error_type === "too_many_request") {
-                errors.value.message = errorData?.data.blocked_until ? `Akun anda telah diblokir, silahkan coba lagi dalam ${formatBlockedTime(errorData.data.blocked_until)}` : "Akun Anda telah diblokir untuk sementara waktu"
-            }
-            else if (errorData?.error_type === "validation_error") {
-                const validationError = errorData.data.error
-                errors.value.email = validationError.email ? validationError.email[0] : '';
-                errors.value.password = validationError.password ? validationError.password[0] : ''
-            }
-           
+            console.error(errorData.message)
+            return false
         }
-        finally {
-            loadingButton.value = false
-        }
-        
     }
 
-    const verifyOtp = async () => {
+    const resetPassword = async () => {
         resetErrors()
-        loadingButton.value = true;
 
         try {
-            const response = await fetchWrapper<LoginResponse>("POST", "/ojk/auth/verify-otp", forms.value);
+            const response = await fetchWrapper<SuccessResponse<[]>>("POST", "/ojk/auth/reset-password", {
+                token: route.query?.token,
+                email: route.query?.email,
+                password: forms.value.password,
+                password_confirmation: forms.value.password_confirmation
+            });
 
-            if (response.success && !response.data.require_otp) {
-                authStore.user = {
-                    username: response.data.name,
-                    token: response.data.token,
-                    isMultiFactorActive: response.data.is_multi_factor_active
-                };
-
-                await authStore.saveToStorage();
-
-                router.push({ name: 'home' }); 
+            if (response.success) {
+                router.push({ name: 'login' }); 
             } else {
                 console.log("Login failed:", response.message);
             }
         }
         catch (err: unknown) {
             const errorData = err as ErrorResponse; 
-            
-            if (errorData?.error_type === "invalid_credential" || errorData?.error_type === "too_many_request"){
-                errors.value.message = "invalid credentials"
+
+             if (errorData?.error_type === "invalid_credential"){
+                errors.value.message = errorData.data.error
             }
             else if (errorData?.error_type === "validation_error") {
                 const validationError = errorData.data.error
-                errors.value.otp = validationError.otp ? validationError.otp[0] : '';
+                errors.value.password = validationError.password ? validationError.password[0] : '';
+                errors.value.password_confirmation = validationError.password_confirmation ? validationError.password_confirmation[0] : '';
+
             }
         }
-        finally {
-            loadingButton.value = false;
-        }
     }
+
+    onMounted(async () => {
+        if(!route.query || !route.query.token || !route.query.email) {
+            router.push({ name: 'login' }); 
+        }
+
+        const isVerified = await verifyEmailAndToken()
+        if (!isVerified) {
+            router.push({ name: 'login' }); 
+        }
+    })
+
+  
+
+   
 </script>
