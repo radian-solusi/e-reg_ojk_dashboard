@@ -107,7 +107,7 @@
     import { useRoute, useRouter } from 'vue-router';
     import { useMeta } from '@/composables/use-meta';
     import { IconCaretDown, IconMail, IconLockDots } from '@components/icon'
-    import { ErrorResponse, LoginResponse, SuccessResponse } from '@/composables/types';
+    import { ErrorResponse, SuccessResponse } from '@/composables/types';
     import { fetchWrapper } from '@/composables/fetchers';
     const API_URL = import.meta.env.VITE_API_URL;
 
@@ -127,8 +127,6 @@
         password_confirmation: '',
         message: ''
     });
-
-    console.log(route.query)
 
 
     const changeLanguage = (item: any) => {

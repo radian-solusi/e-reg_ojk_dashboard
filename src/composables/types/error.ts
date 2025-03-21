@@ -7,12 +7,12 @@ interface ValidationErrorResponse {
 
 interface InvalidCredentialErrorResponse {
     error_type: "invalid_credential",
-    data : { error:  string } | []
+    data : { error:  string } 
 }
 
 interface TooManyAttemptErrorResponse {
     error_type: "too_many_request",
-    data: {error : string} | []
+    data: {error : string}
 }
 
 export type ErrorResponse = BaseErrorResponse<ValidationErrorResponse | InvalidCredentialErrorResponse | TooManyAttemptErrorResponse>

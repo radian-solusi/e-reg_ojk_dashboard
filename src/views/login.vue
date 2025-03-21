@@ -205,7 +205,7 @@
         catch (err: unknown) {
             const errorData = err as ErrorResponse; 
             
-            if (errorData?.error_type === "invalid_credential"){
+            if (errorData?.error_type === "invalid_credential" || errorData?.error_type === "too_many_request"){
                 errors.value.message = "invalid credentials"
             }
             else if (errorData?.error_type === "validation_error") {
@@ -240,7 +240,7 @@
         catch (err: unknown) {
             const errorData = err as ErrorResponse; 
             
-            if (errorData?.error_type === "invalid_credential"){
+            if (errorData?.error_type === "invalid_credential" || errorData?.error_type === "too_many_request"){
                 errors.value.message = "invalid credentials"
             }
             else if (errorData?.error_type === "validation_error") {
