@@ -1,5 +1,5 @@
 <template>
-    <quillEditor v-model:value="content" :options="options" style="min-height: 200px"></quillEditor>
+    <quill-editor v-model:value="content" :options="options" style="min-height: 200px"></quill-editor>
 </template>
 <script setup lang="ts">
 import { ref } from 'vue';

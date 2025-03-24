@@ -1,7 +1,7 @@
 <template>
     <div class="w-full h-4 bg-[#ebedf2] dark:bg-dark/40 rounded-full">
         <div 
-            class="bg-primary h-4 rounded-full w-6/12 animated-progress"
+            class="bg-primary h-4 rounded-full animated-progress"
             :class="collectedClass"
             style="background-image: linear-gradient(45deg,hsla(0,0%,100%,.15) 25%,transparent 0,transparent 50%,hsla(0,0%,100%,.15) 0,hsla(0,0%,100%,.15) 75%,transparent 0,transparent); background-size: 1rem 1rem;" 
         />

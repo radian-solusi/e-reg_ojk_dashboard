@@ -53,6 +53,7 @@ export const useAuthStore = defineStore('auth', () => {
     }
     const login = async (form: formLogin): Promise<{ status: boolean, message?: string}> => {
         const responseLogin = await fetchWrapper('POST','/login', form);
+        console.log(responseLogin)
         await saveToStorage()
         return {
             status: true,

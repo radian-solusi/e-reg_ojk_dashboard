@@ -19,6 +19,6 @@
 
     // meta
     const mainLayout = computed(() => {
-        return store.mainLayout === 'auth' ? authLayout : appLayout;
+        return store.mainLayout.toLowerCase() === 'auth' ? authLayout : appLayout;
     });
 </script>

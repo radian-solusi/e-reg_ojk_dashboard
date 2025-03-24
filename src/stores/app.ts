@@ -94,9 +94,16 @@ export const useAppStore = defineStore('app', {
             }
         },
         toggleSidebar(state: boolean = false) {
+            if (state) {
+                this.sidebar = state;
+            }
             this.sidebar = !this.sidebar;
         },
         toggleMainLoader(state: boolean = false) {
+            if (state) {
+                this.isShowMainLoader = state;
+                return;
+            }
             this.isShowMainLoader = true;
             setTimeout(() => {
                 this.isShowMainLoader = false;

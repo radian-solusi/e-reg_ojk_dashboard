@@ -104,14 +104,14 @@
     import { useI18n } from 'vue-i18n';
     import appSetting from '@/app-setting';
     import { useAppStore, useAuthStore } from '@stores';
-    import { useRouter } from 'vue-router';
+    // import { useRouter } from 'vue-router';
     import { useMeta } from '@/composables/use-meta';
     import { IconCaretDown, IconMail, IconLockDots } from '@components/icon'
     import LoginOtp from '@components/pages/LoginOtp.vue';
     import { Buttons, Checkbox, InputGroup } from "@components/elements"
 
     useMeta({ title: 'Login Page' });
-    const router = useRouter();
+    // const router = useRouter();
     const store = useAppStore();
     const i18n = reactive(useI18n());
     const forms = ref({
@@ -119,7 +119,7 @@
         password: '',
         remember: false
     })
-    const loadingButton = ref(false)
+    // const loadingButton = ref(false)
     const authentication = useAuthStore();
     const showOtp = ref(false)
     const changeLanguage = (item: any) => {
