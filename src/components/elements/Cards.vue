@@ -13,7 +13,7 @@
     </div>
 </template>
 <script setup lang="ts">
-const props = defineProps({
+defineProps({
     image: {
         type: String,
         required: false,

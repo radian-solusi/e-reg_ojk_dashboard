@@ -11,7 +11,7 @@
 <script setup lang="ts">
     import type { colorize } from "@composables/types"
     type buttonSize = 'lg' | 'md' | 'sm' | 'xl' ;
-    import { ref, computed, PropType } from 'vue';
+    import { computed, PropType } from 'vue';
     const props = defineProps({
        as : {
         type: String as PropType<colorize>,

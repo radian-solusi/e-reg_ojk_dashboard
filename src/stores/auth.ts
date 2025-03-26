@@ -22,6 +22,12 @@ export const useAuthStore = defineStore('auth', () => {
         }
         isSynced.value = true;
     }
+    const getUser = computed(() => {
+        if (!isSynced.value) {
+            syncFromStrorage()
+        }
+        return user
+    })
     
     const saveToStorage = async () => {
         // encrypt
@@ -55,6 +61,7 @@ export const useAuthStore = defineStore('auth', () => {
     }
     const login = async (form: formLogin): Promise<{ status: boolean, message?: string}> => {
         const responseLogin = await fetchWrapper('POST','/login', form);
+        console.log(responseLogin)
         await saveToStorage()
         return {
             status: true,

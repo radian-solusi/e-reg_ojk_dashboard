@@ -7,4 +7,9 @@ import type { ErrorResponse } from "./error";
 export type { userlogin, formLogin, LoginResponse, MultiFactorResponse, SuccessResponse, BaseErrorResponse, ErrorResponse }
 export type methodRequest = 'GET' | 'POST' | 'PUT' | 'DELETE';
 export type colorize = 'primary' | 'info' | 'success' | 'warning' | 'danger' | 'secondary' | 'dark';
+export interface breadcrumb {
+    title: string,
+    route: string,
+    active?: boolean
+}
 

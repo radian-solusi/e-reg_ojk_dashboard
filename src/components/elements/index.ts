@@ -14,6 +14,7 @@ import Switch from "./Switch.vue";
 import TextEditor from "./TextEditor.vue";
 import DatePicker from "./DatePicker.vue";
 import Input from "./Input.vue";
+import InputGroup from "./InputGroup.vue";
 
 export { 
     Buttons,
@@ -32,5 +33,6 @@ export {
     TextEditor,
     DatePicker,
     Input,
+    InputGroup,
 
 };

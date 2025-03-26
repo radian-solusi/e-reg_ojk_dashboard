@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-    import { PropType, ref, computed } from 'vue';
+    import { computed } from 'vue';
     import flatPickr from 'vue-flatpickr-component';
     import 'flatpickr/dist/flatpickr.css';
     import { useAppStore } from '@stores';
