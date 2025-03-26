@@ -130,43 +130,19 @@
     </div>
 </template>
 <script lang="ts" setup>
-    import { computed, reactive, ref } from 'vue';
-    import { useI18n } from 'vue-i18n';
-    import appSetting from '@/app-setting';
-    import { useAppStore, useAuthStore } from '@/stores';
-    import { useRouter } from 'vue-router';
-    import { useMeta } from '@/composables/use-meta';
-    import { IconCaretDown, IconMail, IconLockDots } from '@components/icon'
-    import { ErrorResponse, LoginResponse } from '@/composables/types';
-    import { fetchWrapper } from '@/composables/fetchers';
-    import LoginOtp from '@components/pages/LoginOtp.vue';
-    import { Buttons, Input } from "@components/elements"
-    import { useTimeFormatter } from '@/composables/use-time-formatter';
+import appSetting from '@/app-setting';
+import { useLogin } from '@/composables/api';
+import { useMeta } from '@/composables/use-meta';
+import { useAppStore } from '@/stores';
+import { Buttons, Input } from "@components/elements";
+import { IconCaretDown, IconLockDots, IconMail } from '@components/icon';
+import { computed, reactive } from 'vue';
+import { useI18n } from 'vue-i18n';
 
     useMeta({ title: 'Login Page' });
-    const router = useRouter();
     const store = useAppStore();
-    const authStore = useAuthStore(); 
     const i18n = reactive(useI18n());
-    const forms = ref({
-        email: '',
-        password: '',
-        remember: false,
-        otp: ""
-    })
-    const errors = ref({
-        email: '',
-        password: '',
-        message: '',
-        otp: ""
-    });
-    const requireOtp = ref(false);
 
-
-    const loadingButton = ref(false)
-    const authentication = useAuthStore();
-    const showOtp = ref(false)
-    const {formatBlockedTime} = useTimeFormatter()
     const changeLanguage = (item: any) => {
         i18n.locale = item.code;
         appSetting.toggleLanguage(item);
@@ -175,96 +151,6 @@
         return `/assets/images/flags/${i18n.locale.toUpperCase()}.svg`;
     });
 
-    const resetErrors = () => {
-        errors.value = {
-            email: '',
-            password: '',
-            message: '',
-            otp: ''
-        };
-    };
+    const { forms, errors, verifyUser, verifyOtp, loadingButton, requireOtp } = useLogin()
 
-    const verifyUser = async () => {
-        resetErrors()
-        loadingButton.value = true;
-
-        try {
-            const response = await fetchWrapper<LoginResponse>("POST", "/ojk/auth/login", forms.value)
-    
-            if (response.success) {
-                if (!response.data.require_otp) {
-                    authStore.user = {
-                    username: response.data.name,
-                    token: response.data.token,
-                    isMultiFactorActive: response.data.is_multi_factor_active
-                     };
-
-                    await authStore.saveToStorage();
-                    router.push({ name: 'home' }); 
-                }
-                else if (response.data.require_otp) {
-                    requireOtp.value = true;
-                } 
-            } else {
-                console.log("Login failed:", response.message);
-            }
-        }
-        catch (err: unknown) {
-            const errorData = err as ErrorResponse; 
-            
-            if (errorData?.error_type === "invalid_credential" ){
-                errors.value.message = "invalid credentials"
-            }
-            else if ( errorData?.error_type === "too_many_request") {
-                errors.value.message = errorData?.data.blocked_until ? `Akun anda telah diblokir, silahkan coba lagi dalam ${formatBlockedTime(errorData.data.blocked_until)}` : "Akun Anda telah diblokir untuk sementara waktu"
-            }
-            else if (errorData?.error_type === "validation_error") {
-                const validationError = errorData.data.error
-                errors.value.email = validationError.email ? validationError.email[0] : '';
-                errors.value.password = validationError.password ? validationError.password[0] : ''
-            }
-           
-        }
-        finally {
-            loadingButton.value = false
-        }
-        
-    }
-
-    const verifyOtp = async () => {
-        resetErrors()
-        loadingButton.value = true;
-
-        try {
-            const response = await fetchWrapper<LoginResponse>("POST", "/ojk/auth/verify-otp", forms.value);
-
-            if (response.success && !response.data.require_otp) {
-                authStore.user = {
-                    username: response.data.name,
-                    token: response.data.token,
-                    isMultiFactorActive: response.data.is_multi_factor_active
-                };
-
-                await authStore.saveToStorage();
-
-                router.push({ name: 'home' }); 
-            } else {
-                console.log("Login failed:", response.message);
-            }
-        }
-        catch (err: unknown) {
-            const errorData = err as ErrorResponse; 
-            
-            if (errorData?.error_type === "invalid_credential" || errorData?.error_type === "too_many_request"){
-                errors.value.message = "invalid credentials"
-            }
-            else if (errorData?.error_type === "validation_error") {
-                const validationError = errorData.data.error
-                errors.value.otp = validationError.otp ? validationError.otp[0] : '';
-            }
-        }
-        finally {
-            loadingButton.value = false;
-        }
-    }
 </script>
