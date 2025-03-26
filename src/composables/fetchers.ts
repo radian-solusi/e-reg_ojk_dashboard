@@ -1,8 +1,9 @@
 import { useAuthStore } from "@/stores";
 import type { methodRequest } from "@composables/types";
 
-export async function fetchWrapper(request: methodRequest, pathUrl: string, data?: any): Promise<any> {
+export async function fetchWrapper<T>(request: methodRequest, pathUrl: string, data?: any): Promise<T> {
     const authorization = useAuthStore();
+    await authorization.syncFromStorage();
     const options: RequestInit = {
         method: request,
         headers: {
@@ -24,7 +25,25 @@ export async function fetchWrapper(request: methodRequest, pathUrl: string, data
         }
     }
     
-    const urls = import.meta.env.VITE_API_URL + pathUrl;
-    const response = await fetch(urls, options);
-    return await response.json();
+  
+    try {
+        const urls = import.meta.env.VITE_API_URL + pathUrl;
+        const response = await fetch(urls, options);
+
+        let responseData;
+        
+        try {
+            responseData = await response.json();
+        } catch (jsonError) {
+            throw new Error("Failed to parse JSON response");
+        }
+
+        if (!response.ok) {
+            return Promise.reject(responseData); 
+        }
+
+        return responseData as T;
+    } catch (error) {
+        throw error;
+    }
 }

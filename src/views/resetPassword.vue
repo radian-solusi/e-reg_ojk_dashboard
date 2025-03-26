@@ -66,62 +66,32 @@
                         <p v-if="errors.message" class="text-red-500 text-sm text-center mb-4">
                             {{ errors.message }}
                         </p>
-                        <div v-if="requireOtp">
-                            <form class="space-y-5 dark:text-white" @submit.prevent="verifyOtp">
+                        <form class="space-y-5 dark:text-white" @submit.prevent="resetPassword">
                                 <div>
-                                    <label for="otp">{{ $t('otp_label') }}</label>
+                                    <label for="password">{{ $t('password') }}</label>
                                     <div class="relative text-white-dark">
-                                        <Input id="otp" type="text" :placeholder="$t('placeholder_otp')" class="form-input ps-10 placeholder:text-white-dark" v-model="forms.otp" />
-                                        <span class="absolute start-4 top-1/2 -translate-y-1/2">
-                                            <icon-lock-dots :fill="true" />
-                                        </span>
-                                    </div>
-                                    <p v-if="errors.otp" class="text-red-500 text-sm">{{ errors.otp }}</p>
-                                </div>
-                                <button type="submit" class="btn btn-primary btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]">
-                                    {{ $t('signin') }}
-                                </button>
-                            </form>
-                        </div>
-                        <div v-else>
-                            <form class="space-y-5 dark:text-white" @submit.prevent="verifyUser">
-                                <div>
-                                    <label for="Email">{{ $t('email') }}</label>
-                                    <div class="relative text-white-dark">
-                                        <Input id="Email" type="email" v-model="forms.email" :placeholder="$t('placeholder_email')"  class="form-input ps-10 placeholder:text-white-dark"/>
+                                        <input id="password" type="password" :placeholder="$t('placeholder_password')" class="form-input ps-10 placeholder:text-white-dark" v-model="forms.password" />
                                         <span class="absolute start-4 top-1/2 -translate-y-1/2">
                                             <icon-mail :fill="true" />
                                         </span>
                                     </div>
-                                    <p v-if="errors.email" class="text-red-500 text-sm">{{ errors.email }}</p>
+                                    <p v-if="errors.password" class="text-red-500 text-sm">{{ errors.password }}</p>
                                 </div>
                                 <div>
-                                    <label for="Password">{{ $t('password') }}</label>
+                                    <label for="password_confirmation">{{ $t('password_confirmation') }}</label>
                                     <div class="relative text-white-dark">
-                                        <Input id="Password" type="password" :placeholder="$t('placeholder_password')" class="form-input ps-10 placeholder:text-white-dark" v-model="forms.password" />
+                                        <input id="password_confirmation" type="password" :placeholder="$t('placeholder_password_confirmation')" class="form-input ps-10 placeholder:text-white-dark" v-model="forms.password_confirmation" />
                                         <span class="absolute start-4 top-1/2 -translate-y-1/2">
                                             <icon-lock-dots :fill="true" />
                                         </span>
                                     </div>
-                                    <p v-if="errors.password" class="text-red-500 text-sm">{{ errors.password }}</p>
+                                    <p v-if="errors.password_confirmation" class="text-red-500 text-sm">{{ errors.password_confirmation }}</p>
 
                                 </div>
-                                <div>
-                                    <label class="flex cursor-pointer items-center">
-                                        <input type="checkbox" class="form-checkbox bg-white dark:bg-black" v-model="forms.remember" />
-                                        <span class="text-white-dark">{{ $t('remember_me') }}</span>
-                                    </label>
-                                </div>
-                                <Buttons 
-                                    as="primary" 
-                                    block 
-                                    :loading="loadingButton"
-                                    otherClass="!mt-6 border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)] text-white"
-                                >
-                                    {{ $t('signin') }}
-                                </Buttons>
-                            </form>
-                        </div>
+                                <button type="submit" class="btn btn-primary btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]">
+                                    {{ $t('save') }}
+                                </button>
+                        </form>
                        
                     </div>
                 </div>
@@ -130,18 +100,22 @@
     </div>
 </template>
 <script lang="ts" setup>
-import appSetting from '@/app-setting';
-import { useLogin } from '@/composables/api';
-import { useMeta } from '@/composables/use-meta';
-import { useAppStore } from '@/stores';
-import { Buttons, Input } from "@components/elements";
-import { IconCaretDown, IconLockDots, IconMail } from '@components/icon';
-import { computed, reactive } from 'vue';
-import { useI18n } from 'vue-i18n';
+    import appSetting from '@/app-setting';
+    import { useResetPassword } from '@/composables/api';
+    import { useMeta } from '@/composables/use-meta';
+    import { useAppStore } from '@/stores';
+    import { IconCaretDown, IconLockDots, IconMail } from '@components/icon';
+    import { computed, onMounted, reactive } from 'vue';
+    import { useI18n } from 'vue-i18n';
+    import { useRoute, useRouter } from 'vue-router';
 
     useMeta({ title: 'Login Page' });
+    const router = useRouter();
+    const route = useRoute();
     const store = useAppStore();
     const i18n = reactive(useI18n());
+    const {  forms, errors, loading, verifyEmailAndToken, resetPassword} = useResetPassword()
+
 
     const changeLanguage = (item: any) => {
         i18n.locale = item.code;
@@ -151,6 +125,15 @@ import { useI18n } from 'vue-i18n';
         return `/assets/images/flags/${i18n.locale.toUpperCase()}.svg`;
     });
 
-    const { forms, errors, verifyUser, verifyOtp, loadingButton, requireOtp } = useLogin()
+    onMounted(async () => {
+        if(!route.query || !route.query.token || !route.query.email) {
+            router.push({ name: 'login' }); 
+        }
 
+        const isVerified = await verifyEmailAndToken()
+        if (!isVerified) {
+            router.push({ name: 'login' }); 
+        }
+    })
+   
 </script>
