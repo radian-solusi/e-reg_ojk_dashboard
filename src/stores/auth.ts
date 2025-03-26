@@ -8,10 +8,12 @@ import type { userlogin, formLogin } from '@composables/types';
 export const useAuthStore = defineStore('auth', () => {
     const user = ref<userlogin>({
         username: '',
+        token: '',
+        isMultiFactorActive: false,
     })
     const returnUrl = ref<string>('/');
     const isSynced = ref(false)
-    const syncFromStrorage = async () => {
+    const syncFromStorage = async () => {
         let auths = localStorage.getItem('auths')
         if (auths) {
             // decrypt
@@ -30,18 +32,24 @@ export const useAuthStore = defineStore('auth', () => {
     const saveToStorage = async () => {
         // encrypt
         const encryptedAuth = await encrypt(JSON.stringify(user.value))
-        localStorage.setItem('auths', encryptedAuth)
+        localStorage.setItem('auths', encryptedAuth || "")
         isSynced.value = true
     }
 
     const isLogin = computed(() => {
         return user.value.token ? true : false
     })
+    const isMultiFactorActive = computed(() => {
+        return user.value.isMultiFactorActive
+    })
     const getToken = computed(() => {
         if (!isSynced.value) {
-            syncFromStrorage()
+            syncFromStorage()
         }
         return user.value.token
+    })
+    const getUsername = computed(() => {
+        return user.value.username
     })
     const logout = () => {
         user.value = {
@@ -59,11 +67,17 @@ export const useAuthStore = defineStore('auth', () => {
             status: true,
         }
     }
+    const activateMultiFactor = async () => {
+        user.value.isMultiFactorActive = true;
+        await saveToStorage();
+        await syncFromStorage();
+    };
+
     const setReturnUrl = (url: string) => {
         returnUrl.value = url
     }
     const getReturnUrl = () => {
         return returnUrl.value
     }
-    return { isLogin, getToken, getUser, logout, login, setReturnUrl, getReturnUrl }
+    return { user, isLogin, isSynced, isMultiFactorActive, syncFromStorage, saveToStorage, getToken, getUsername, logout, login, activateMultiFactor, setReturnUrl, getReturnUrl }
 })

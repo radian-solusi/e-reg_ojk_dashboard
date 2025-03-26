@@ -179,23 +179,22 @@
                                             </div>
                                             <div class="ltr:pl-4 rtl:pr-4 truncate">
                                                 <h4 class="text-base">
-                                                    John Doe<span class="text-xs bg-success-light rounded text-success px-1 ltr:ml-2 rtl:ml-2">Pro</span>
+                                                    {{ authStore.getUsername }}
                                                 </h4>
-                                                <a class="text-black/60 hover:text-primary dark:text-dark-light/60 dark:hover:text-white" href="javascript:;"
-                                                    >johndoe@gmail.com</a
-                                                >
+                                                <!-- <a class="text-black/60 hover:text-primary dark:text-dark-light/60 dark:hover:text-white" href="javascript:;"
+                                                    ></a> -->
                                             </div>
                                         </div>
                                     </li>
                                     <li>
-                                        <router-link to="/users/profile" class="dark:hover:text-white" @click="close()">
+                                        <router-link to="/profile" class="dark:hover:text-white" @click="close()">
                                             <icon-user class="w-4.5 h-4.5 ltr:mr-2 rtl:ml-2 shrink-0" />
 
                                             Profile
                                         </router-link>
                                     </li>
                                     <li class="border-t border-white-light dark:border-white-light/10">
-                                        <button class="text-danger !py-3" @click="Logout">
+                                        <button @click="handleLogout" class="text-danger !py-3">
                                             <icon-logout class="w-4.5 h-4.5 ltr:mr-2 rtl:ml-2 rotate-90 shrink-0" />
 
                                             Sign Out
@@ -220,10 +219,12 @@
     import { useRoute } from 'vue-router';
     import { useAppStore, useAuthStore } from '@stores';
 
-    import { Breadcrumbs } from '@components/elements';
-    import { IconMenu, IconXCircle, IconSun, IconMoon, IconLaptop, IconInfoCircle, IconBellBing, IconUser, IconLogout } from '@components/icon';
+    import { IconMenu, IconXCircle, IconSun, IconMoon, IconLaptop, IconArrowLeft, IconInfoCircle, IconBellBing, IconUser, IconMail, IconLogout } from '@components/icon';
+    import { fetchWrapper } from '@/composables/fetchers';
+    import { ErrorResponse, SuccessResponse } from '@/composables/types';
 
     const store = useAppStore();
+    const authStore = useAuthStore();
     const route = useRoute();
     const user = useAuthStore();
     // multi language
@@ -266,6 +267,28 @@
     watch(route, () => {
         setActiveDropdown();
     });
+
+    const userLogout = async () => {
+
+        try {
+            const response = await fetchWrapper<SuccessResponse<[]>>("POST", "/ojk/auth/logout");
+
+            if (response.success) {
+
+                authStore.logout();
+            } else {
+                console.log("logout failed:", response.message);
+            }
+        }
+        catch (err: unknown) {
+            const errorData = err as ErrorResponse; 
+            console.error(errorData.message)
+        }
+    }
+
+    const handleLogout = async () => {
+        await userLogout()
+    };
 
     const setActiveDropdown = () => {
         const selector = document.querySelector('ul.horizontal-menu a[href="' + window.location.pathname + '"]');

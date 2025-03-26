@@ -2,7 +2,7 @@
     <div class="mb-5">
         <!-- Modal -->
         <TransitionRoot appear :show="modal" as="template">
-            <Dialog as="div" @close="closeModal" class="relative z-50">
+            <Dialog as="div" @close="props.isBackgroundClose ? closeModal : null" class="relative z-50">
                 <TransitionChild as="template" enter="duration-300 ease-out" enter-from="opacity-0"
                     enter-to="opacity-100" leave="duration-200 ease-in" leave-from="opacity-100" leave-to="opacity-0">
                     <DialogOverlay class="fixed inset-0 bg-[black]/60" />
@@ -22,7 +22,7 @@
                                 class="panel border-0 p-0 rounded-lg overflow-hidden w-full text-black dark:text-white-dark" :class="classSize">
                                 <button type="button"
                                     class="absolute top-4 ltr:right-4 rtl:left-4 text-gray-400 hover:text-gray-800 dark:hover:text-gray-600 outline-none"
-                                    @click="closeModal">
+                                    @click="props.isBackgroundClose ? closeModal : null">
                                     <IconXCircle />
                                 </button>
                                 <div
@@ -61,10 +61,17 @@ const props = defineProps({
     size: {
         type: String as PropType<sizeModal>,
         default: () => 'md'
-    }
+    },
+    onClose: {
+        type: Function as PropType<() => void>, 
+    },
+    isBackgroundClose: {
+        type: Boolean,
+        default: () => true,
+    },
 })
 const closeModal = () => {
-    modal.value = false
+    props.onClose ? props.onClose() : modal.value = false
 }
 
 const classSize = computed(() => {
