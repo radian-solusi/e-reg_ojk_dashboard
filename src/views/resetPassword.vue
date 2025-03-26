@@ -100,33 +100,21 @@
     </div>
 </template>
 <script lang="ts" setup>
-    import { computed, onMounted, reactive, ref } from 'vue';
-    import { useI18n } from 'vue-i18n';
     import appSetting from '@/app-setting';
-    import { useAppStore, useAuthStore } from '@/stores';
-    import { useRoute, useRouter } from 'vue-router';
+    import { useResetPassword } from '@/composables/api';
     import { useMeta } from '@/composables/use-meta';
-    import { IconCaretDown, IconMail, IconLockDots } from '@components/icon'
-    import { ErrorResponse, SuccessResponse } from '@/composables/types';
-    import { fetchWrapper } from '@/composables/fetchers';
-    const API_URL = import.meta.env.VITE_API_URL;
+    import { useAppStore } from '@/stores';
+    import { IconCaretDown, IconLockDots, IconMail } from '@components/icon';
+    import { computed, onMounted, reactive } from 'vue';
+    import { useI18n } from 'vue-i18n';
+    import { useRoute, useRouter } from 'vue-router';
 
     useMeta({ title: 'Login Page' });
     const router = useRouter();
     const route = useRoute();
     const store = useAppStore();
-    const authStore = useAuthStore(); 
     const i18n = reactive(useI18n());
-    const forms = ref({
-        password: '',
-        password_confirmation: '',
-
-    })
-    const errors = ref({
-        password: '',
-        password_confirmation: '',
-        message: ''
-    });
+    const {  forms, errors, loading, verifyEmailAndToken, resetPassword} = useResetPassword()
 
 
     const changeLanguage = (item: any) => {
@@ -136,68 +124,6 @@
     const currentFlag = computed(() => {
         return `/assets/images/flags/${i18n.locale.toUpperCase()}.svg`;
     });
-
-    const resetErrors = () => {
-        errors.value = {
-            password: '',
-            password_confirmation: '',
-            message: ''
-        };
-    };
-
-    const verifyEmailAndToken = async () : Promise<boolean> => {
-
-        try {
-            const response = await fetchWrapper<SuccessResponse<[]>>("POST", "/ojk/auth/verify-reset-password", {
-                token: route.query?.token,
-                email: route.query?.email
-            });
-
-            if (response.success) {
-              return true
-            } else {
-                console.log("Login failed:", response.message);
-              return false
-            }
-        }
-        catch (err: unknown) {
-            const errorData = err as ErrorResponse; 
-            console.error(errorData.message)
-            return false
-        }
-    }
-
-    const resetPassword = async () => {
-        resetErrors()
-
-        try {
-            const response = await fetchWrapper<SuccessResponse<[]>>("POST", "/ojk/auth/reset-password", {
-                token: route.query?.token,
-                email: route.query?.email,
-                password: forms.value.password,
-                password_confirmation: forms.value.password_confirmation
-            });
-
-            if (response.success) {
-                router.push({ name: 'login' }); 
-            } else {
-                console.log("Login failed:", response.message);
-            }
-        }
-        catch (err: unknown) {
-            const errorData = err as ErrorResponse; 
-
-             if (errorData?.error_type === "invalid_credential"){
-                errors.value.message = errorData.data.error
-            }
-            else if (errorData?.error_type === "validation_error") {
-                const validationError = errorData.data.error
-                errors.value.password = validationError.password ? validationError.password[0] : '';
-                errors.value.password_confirmation = validationError.password_confirmation ? validationError.password_confirmation[0] : '';
-
-            }
-        }
-    }
 
     onMounted(async () => {
         if(!route.query || !route.query.token || !route.query.email) {
@@ -209,8 +135,5 @@
             router.push({ name: 'login' }); 
         }
     })
-
-  
-
    
 </script>
