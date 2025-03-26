@@ -1,21 +1,20 @@
 import { BaseErrorResponse } from "./response";
 
 interface ValidationErrorResponse {
-    error_type: "validation_error",
-    data : { error:  Record<string, string[]> }
+    message: string;
+    type: "validation_error";
+    field: string;
 }
 
 interface InvalidCredentialErrorResponse {
-    error_type: "invalid_credential",
-    data : { error:  string } 
+    message: string;
+    type: "invalid_credential";
 }
 
 interface TooManyAttemptErrorResponse {
-    error_type: "too_many_request",
-    data: {
-        error : string
-        blocked_until : number
-    }
+    message: string;
+    type: "too_many_request";
+    blocked_until: number;
 }
 
 export type ErrorResponse = BaseErrorResponse<ValidationErrorResponse | InvalidCredentialErrorResponse | TooManyAttemptErrorResponse>

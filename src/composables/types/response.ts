@@ -1,21 +1,33 @@
 /**
- * Base response structure for successful API responses.
- * @template T - Type of the data returned in the response.
+ * Base response structure for all API responses
  */
-export interface SuccessResponse<T> {
+interface BaseResponse {
+    success: boolean;
+    code: number;
+    message: string;
+  }
+  
+  /**
+   * Structure for successful responses
+   * @template T - Type of the data payload
+   */
+  export interface SuccessResponse<T> extends BaseResponse {
     success: true;
-    message: string;
     data: T;
-}
-
-/**
- * Base response structure for error API responses.
- * @template T - Type representing the error details.
- *              Must include `error_type` (e.g., "validation_error", "invalid_credential")
- *              and `data` (e.g., { error: string } or { errors: Record<string, string[]> }).
- */
-export type BaseErrorResponse<T extends { error_type: string; data: unknown }> = {
-    success: false;
+    errors: null;
+  }
+  
+  /**
+   * Structure for error responses
+   */
+  interface BaseApiError{
     message: string;
-  } & T;
+    type: string;
+  }
+
+  export interface BaseErrorResponse<T extends BaseApiError> extends BaseResponse {
+    success: false;
+    data: null;
+    errors: T[];
+  }
   
