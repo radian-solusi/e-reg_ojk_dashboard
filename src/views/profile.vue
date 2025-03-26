@@ -45,20 +45,7 @@
             </div>
             <p class="text-sm text-gray-600">{{ $t('scan_qr') }}</p>
           </div>
-
-          <!-- OTP Verification Section -->
-          <div class="max-w-md mx-auto space-y-4">
-            <div class="space-y-2">
-              <label class="block text-sm font-medium text-gray-700">{{ $t('verify_otp') }}</label>
-              <form class="flex gap-2" @submit.prevent="verifyMultiFactorCode">
-                <input v-model="otpCode" type="text" inputmode="numeric" pattern="[0-9]*" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-400" :placeholder="$t('enter_otp')" maxlength="6"/>
-                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                  {{ $t('verify') }}
-                </button>
-              </form>
-            </div>
-          </div>
-
+      
           <!-- Recovery Codes Section -->
           <div class="space-y-4">
             <div class="bg-gray-50 p-4 rounded-lg">
@@ -83,101 +70,8 @@
 </template>
   
   <script lang="ts" setup>
-  import { onMounted, ref, computed } from "vue";
-  import { fetchWrapper } from '@/composables/fetchers';
-  import { useAuthStore } from "@/stores";
-  import { MultiFactorResponse, ErrorResponse, SuccessResponse } from "@/composables/types";
-
-
-  const authStore = useAuthStore()
-  const isTwoFactorEnabled = computed(() => authStore.isMultiFactorActive);
-  const isAlreadyFetchTwoFactorInfo = ref(false);
-  const showCodes = ref(false);
-  const qrCode = ref(``); // Ganti dengan QR Code yang sesuai
-  const recoveryCodes = ref([""]);
-  const otpCode = ref("");
-  const otpFeedback = ref<{ type: 'success' | 'error', message: string } | null>(null);
-  const error = ref("")
-  
-  const handleShowTwoFactorInfo = async () => {
-    showCodes.value = !showCodes.value;
-    
-    if (showCodes.value && !isAlreadyFetchTwoFactorInfo.value) {
-      await getUserMultiFactorInfo();
-      isAlreadyFetchTwoFactorInfo.value = true;
-    }
-  };
-  
-  const activateTwoFactor = async () => {
-    try {
-            const response = await fetchWrapper<SuccessResponse<[]>>("POST", "/ojk/2fa/activate");
-
-            if (response.success) {
-              await authStore.activateMultiFactor()
-            }
-        }
-    catch (err: unknown) {
-            const errorData = err as ErrorResponse;
-            console.log(errorData) 
-            
-    }
-
-  };
-  
-
-    const verifyMultiFactorCode = async () => {
-        otpFeedback.value = null
-
-        try {
-            const response = await fetchWrapper<SuccessResponse<[]>>("POST", "/ojk/2fa/verify", {
-                otp: otpCode.value
-            });
-
-            if (response.success) {
-                otpFeedback.value = {
-                    type: 'success',
-                    message: 'Kode OTP valid! Autentikasi berhasil.'
-                };
-            } else {
-                otpFeedback.value = {
-                    type: 'error',
-                    message: 'Kode OTP tidak valid. Silakan coba lagi.'
-                };
-            }
-        }
-        catch (err: unknown) {
-            const errorData = err as ErrorResponse;
-            console.log(errorData) 
-            
-            if (errorData?.error_type === "invalid_credential"){
-                otpFeedback.value = {
-                type: 'error',
-                message: 'Kode OTP tidak valid.'
-                };           
-            }
-        }
-    }
-
-    const getUserMultiFactorInfo = async () => {
-        try {
-            const response = await fetchWrapper<MultiFactorResponse>("GET", "/ojk/2fa/info");
-
-            if (response.success) {
-                qrCode.value = response.data.qr_code,
-                recoveryCodes.value = response.data.recovery_codes
-            } else {
-                console.log("Login failed:", response.message);
-            }
-        }
-        catch (err: unknown) {
-            const errorData = err as ErrorResponse;
-            console.log(errorData) 
-            
-            if (errorData?.error_type === "invalid_credential"){
-                error.value = errorData.data.error
-            }
-        }
-    }
+  import { useTwoFactor } from "@/composables/api";
+  const { isTwoFactorEnabled, showCodes, qrCode, recoveryCodes, handleShowTwoFactorInfo, activateTwoFactor} = useTwoFactor()
 
   </script>
   

@@ -1,3 +1,3 @@
-import { useLogin } from "./auth";
+import { useLogin, useTwoFactor } from "./auth";
 
-export { useLogin }
+export { useLogin, useTwoFactor }
