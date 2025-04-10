@@ -34,7 +34,7 @@ export function useResetPassword() {
 
   const verifyEmailAndToken = async (): Promise<boolean> => {
     try {
-      const response = await fetchWrapper<SuccessResponse<[]>>("POST", "/ojk/auth/verify-reset-password", {
+      const response = await fetchWrapper<SuccessResponse<[]>>("POST", "/auth/verify-reset-password", {
         token: route.query?.token,
         email: route.query?.email
       });
@@ -50,7 +50,7 @@ export function useResetPassword() {
     loading.value = true;
 
     try {
-      const response = await fetchWrapper<SuccessResponse<[]>>("POST", "/ojk/auth/reset-password", {
+      const response = await fetchWrapper<SuccessResponse<[]>>("POST", "/auth/reset-password", {
         token: route.query?.token,
         email: route.query?.email,
         password: forms.value.password,

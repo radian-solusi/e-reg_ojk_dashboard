@@ -28,7 +28,7 @@ export function useTwoFactor() {
   // Aktifkan 2FA
   const activateTwoFactor = async () => {
     try {
-      const response = await fetchWrapper<SuccessResponse<[]>>("POST", "/ojk/2fa/activate");
+      const response = await fetchWrapper<SuccessResponse<[]>>("POST", "/2fa/activate");
       if (response.success) {
         // Update state di authStore (misalnya method activateMultiFactor di store)
         await authStore.activateMultiFactor();
@@ -42,7 +42,7 @@ export function useTwoFactor() {
   // Fetch info 2FA dari API
   const getUserMultiFactorInfo = async () => {
     try {
-      const response = await fetchWrapper<MultiFactorResponse>("GET", "/ojk/2fa/info");
+      const response = await fetchWrapper<MultiFactorResponse>("GET", "/2fa/info");
       if (response.success) {
         qrCode.value = response.data.qr_code;
         recoveryCodes.value = response.data.recovery_codes;

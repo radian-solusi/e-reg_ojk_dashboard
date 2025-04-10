@@ -4,14 +4,12 @@ import { useAuthStore } from "@/stores/auth";
 import { useHandleError } from "@/composables/use-handle-error";
 import { fetchWrapper } from "@/composables/fetchers";
 import { ErrorResponse, LoginResponse } from "@/composables/types";
-import { useTimeFormatter } from "@/composables/use-time-formatter";
 
 export function useLogin() {
     const router = useRouter();
     const authStore = useAuthStore();
     const loadingButton = ref(false);
     const requireOtp = ref(false);
-    const { formatBlockedTime } = useTimeFormatter();
 
     // Forms & Errors as reactive refs
     const forms = ref({
@@ -44,7 +42,7 @@ export function useLogin() {
         loadingButton.value = true;
 
         try {
-            const response = await fetchWrapper<LoginResponse>("POST", "/ojk/auth/login", forms.value);
+            const response = await fetchWrapper<LoginResponse>("POST", "/auth/login", forms.value);
 
             if (response.success) {
                 if (!response.data.require_otp) {
@@ -75,7 +73,7 @@ export function useLogin() {
         loadingButton.value = true;
 
         try {
-            const response = await fetchWrapper<LoginResponse>("POST", "/ojk/auth/verify-otp", forms.value);
+            const response = await fetchWrapper<LoginResponse>("POST", "/auth/verify-otp", forms.value);
 
             if (response.success && !response.data.require_otp) {
                 authStore.user = {

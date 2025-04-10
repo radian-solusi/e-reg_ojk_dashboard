@@ -12,7 +12,10 @@ export async function fetchWrapper<T>(request: methodRequest, pathUrl: string, d
     }
 
     if (data) {
-        options.body = JSON.stringify(data);
+        if (request.toLowerCase() === "get") {
+            // add query params
+            pathUrl += `?${new URLSearchParams(data).toString()}`
+        } else options.body = JSON.stringify(data);
     }
 
     if (authorization.isLogin) {
@@ -34,8 +37,8 @@ export async function fetchWrapper<T>(request: methodRequest, pathUrl: string, d
         
         try {
             responseData = await response.json();
-        } catch (jsonError) {
-            throw new Error("Failed to parse JSON response");
+        } catch (jsonErrr) {
+            throw new Error("Failed to parse JSON response", { cause: jsonErrr });
         }
 
         if (!response.ok) {
