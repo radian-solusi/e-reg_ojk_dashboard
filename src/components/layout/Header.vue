@@ -271,7 +271,7 @@
     const userLogout = async () => {
 
         try {
-            const response = await fetchWrapper<SuccessResponse<[]>>("POST", "/ojk/auth/logout");
+            const response = await fetchWrapper<SuccessResponse<[]>>("POST", "/auth/logout");
 
             if (response.success) {
 
