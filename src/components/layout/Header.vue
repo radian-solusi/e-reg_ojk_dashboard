@@ -194,10 +194,12 @@
                                         </router-link>
                                     </li>
                                     <li class="border-t border-white-light dark:border-white-light/10">
-                                        <button @click="handleLogout" class="text-danger !py-3">
+                                        <button @click="handleLogout" class="text-danger !py-3" :class="{ 'disabled:pointer-events-none disabled:opacity-60': logoutButton }" :disabled="logoutButton">
                                             <icon-logout class="w-4.5 h-4.5 ltr:mr-2 rtl:ml-2 rotate-90 shrink-0" />
 
                                             Sign Out
+
+                                            <icon-loading v-if="logoutButton" class="w-4.5 h-4.5 ltr:ml-2 rtl:mr-2 " />
                                         </button>
                                     </li>
                                 </ul>
@@ -219,7 +221,7 @@
     import { useRoute } from 'vue-router';
     import { useAppStore, useAuthStore } from '@stores';
 
-    import { IconMenu, IconXCircle, IconSun, IconMoon, IconLaptop,  IconInfoCircle, IconBellBing, IconUser, IconLogout } from '@components/icon';
+    import { IconMenu, IconXCircle, IconSun, IconMoon, IconLaptop,  IconInfoCircle, IconBellBing, IconUser, IconLogout, IconLoading } from '@components/icon';
     import { fetchWrapper } from '@/composables/fetchers';
     import { ErrorResponse, SuccessResponse } from '@/composables/types';
     import { Breadcrumbs } from '@components/elements';
@@ -227,6 +229,7 @@
     const store = useAppStore();
     const route = useRoute();
     const user = useAuthStore();
+    const logoutButton = ref(false)
     // multi language
     const i18n = reactive(useI18n());
     const changeLanguage = (item: any) => {
@@ -266,7 +269,6 @@
     });
 
     const userLogout = async () => {
-
         try {
             const response = await fetchWrapper<SuccessResponse<[]>>("POST", "/auth/logout");
 
@@ -284,7 +286,9 @@
     }
 
     const handleLogout = async () => {
+        logoutButton.value = true
         await userLogout()
+        logoutButton.value = false
     };
 
     const setActiveDropdown = () => {

@@ -40,7 +40,30 @@
                         </h2>
 
                         <li class="nav-item">
-                            <ul></ul>
+                            <ul>
+                                <li class="nav-item">
+                                    <router-link to="/emitens" @click="toggleMobileMenu">
+                                        <div class="flex items-center">
+                                            <icon-file class="group-hover:!text-primary shrink-0" />
+
+                                            <span class="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">
+                                                Emiten
+                                            </span>
+                                        </div>
+                                    </router-link>
+                                </li>
+                                <li class="nav-item">
+                                    <router-link to="/matriks-evaluasi" @click="toggleMobileMenu">
+                                        <div class="flex items-center">
+                                            <icon-laptop class="group-hover:!text-primary shrink-0" />
+
+                                            <span class="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">
+                                                Matriks Evaluasi
+                                            </span>
+                                        </div>
+                                    </router-link>
+                                </li>
+                            </ul>
                         </li>
                     </ul>
                 </perfect-scrollbar>
@@ -55,7 +78,7 @@
     import { useAppStore } from '@stores';
     // import VueCollapsible from 'vue-height-collapsible/vue3';
 
-    import { IconCaretsDown, IconMenuDashboard, IconMenu } from '@components/icon';
+    import { IconCaretsDown, IconMenuDashboard, IconMenu, IconLaptop, IconFile } from '@components/icon';
 
     const store = useAppStore();
     const activeDropdown: any = ref('');

@@ -14,33 +14,16 @@
             </div>
             <div class="w-full flex justify-normal items-center p-4">
                 <div class="w-full">
-                    <div class="table-responsive">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Emiten</th>
-                                    <th>Aspek</th>
-                                    <th>Tipe</th>
-                                    <th>Diubah Oleh</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <template v-for="(item, index) in dashboard_data?.recent_activities" :key="index">
-                                    <tr>
-                                        <td>{{ item.emiten }}</td>
-                                        <td>{{ item.aspek }}</td>
-                                        <td>{{ item.tipe }}</td>
-                                        <td>
-                                            <div class="grid grid-cols-1 gap-2">
-                                                <span>{{ item.diubah_oleh }}</span>
-                                                <span class="text-sm text-white-dark italic">{{ item.waktu }}</span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </template>
-                            </tbody>
-                        </table>
-                    </div>
+                    <simple-table :header="headerData">
+                        <template v-for="(item, index) in dashboard_data?.recent_activities ?? []" :key="index">
+                            <tr>
+                                <td>{{ item.aspek }}</td>
+                                <td>{{ item.emiten }}</td>
+                                <td>{{ item.tipe }}</td>
+                                <td>{{ item.diubah_oleh }}</td>
+                            </tr>
+                        </template>
+                    </simple-table>
                 </div>
             </div>
         </panel>
@@ -50,7 +33,7 @@
 import { computed, onMounted, ref } from 'vue';
 import { useMeta } from '@composables/use-meta';
 import { useI18n } from 'vue-i18n';
-import { Panel, Card, Counter } from '@/components/elements';
+import { Panel, Card, Counter, SimpleTable } from '@/components/elements';
 import { useAuthStore } from '@/stores';
 import { GetDashboard } from '@/composables/api';
 import type { ResponseDashboard } from '@/composables/types';
@@ -68,6 +51,12 @@ const welcoming = computed(() => {
 })
 const dashboard_data = ref<ResponseDashboard>()
 const loadingPage = ref(false)
+const headerData = computed(() => {
+    const data = dashboard_data.value?.recent_activities ?? []
+    // extract key only
+    return data.length > 0 ? Object.keys(data[0]).map(key => key.replace(/_/g, ' ')) : []
+
+})
 const cardData = computed(() => {
     return [
         {

@@ -15,6 +15,7 @@ import TextEditor from "./TextEditor.vue";
 import DatePicker from "./DatePicker.vue";
 import Input from "./Input.vue";
 import InputGroup from "./InputGroup.vue";
+import SimpleTable from "./SimpleTable.vue";
 
 export { 
     Buttons,
@@ -34,5 +35,5 @@ export {
     DatePicker,
     Input,
     InputGroup,
-
+    SimpleTable,
 };
