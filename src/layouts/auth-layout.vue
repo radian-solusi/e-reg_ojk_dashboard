@@ -1,7 +1,7 @@
 <template>
     <div class="text-black dark:text-white-dark">
         <!-- screen loader -->
-        <screen-loader />
+        <screen-loader v-show="store.isShowMainLoader" />
 
         <div class="fixed bottom-6 ltr:right-6 rtl:left-6 z-50">
             <template v-if="showTopButton">
@@ -103,6 +103,7 @@
     import { useAppStore } from '@stores';
     import { useI18n } from 'vue-i18n';
     import ScreenLoader from '@components/ScreenLoader.vue';
+    import { IconCaretDown } from '@/components/icon';
 
     const store = useAppStore();
     const showTopButton = ref(false);

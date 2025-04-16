@@ -31,3 +31,9 @@ interface BaseResponse {
     errors: T[];
   }
   
+  export interface BaseResponseRefactor<T> {
+    success: boolean;
+    code: number;
+    data: T;
+    error: Array<BaseApiError>
+  }

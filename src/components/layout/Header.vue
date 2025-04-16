@@ -179,7 +179,7 @@
                                             </div>
                                             <div class="ltr:pl-4 rtl:pr-4 truncate">
                                                 <h4 class="text-base">
-                                                    {{ authStore.getUsername }}
+                                                    {{ user.getUsername }}
                                                 </h4>
                                                 <!-- <a class="text-black/60 hover:text-primary dark:text-dark-light/60 dark:hover:text-white" href="javascript:;"
                                                     ></a> -->
@@ -219,12 +219,12 @@
     import { useRoute } from 'vue-router';
     import { useAppStore, useAuthStore } from '@stores';
 
-    import { IconMenu, IconXCircle, IconSun, IconMoon, IconLaptop, IconArrowLeft, IconInfoCircle, IconBellBing, IconUser, IconMail, IconLogout } from '@components/icon';
+    import { IconMenu, IconXCircle, IconSun, IconMoon, IconLaptop,  IconInfoCircle, IconBellBing, IconUser, IconLogout } from '@components/icon';
     import { fetchWrapper } from '@/composables/fetchers';
     import { ErrorResponse, SuccessResponse } from '@/composables/types';
+    import { Breadcrumbs } from '@components/elements';
 
     const store = useAppStore();
-    const authStore = useAuthStore();
     const route = useRoute();
     const user = useAuthStore();
     // multi language
@@ -236,9 +236,6 @@
     const currentFlag = computed(() => {
         return `/assets/images/flags/${i18n.locale.toUpperCase()}.svg`;
     });
-    const Logout = () => {
-        user.logout();
-    }
     const notifications = ref([
         {
             id: 1,
@@ -271,11 +268,11 @@
     const userLogout = async () => {
 
         try {
-            const response = await fetchWrapper<SuccessResponse<[]>>("POST", "/ojk/auth/logout");
+            const response = await fetchWrapper<SuccessResponse<[]>>("POST", "/auth/logout");
 
             if (response.success) {
 
-                authStore.logout();
+                user.logout()
             } else {
                 console.log("logout failed:", response.message);
             }

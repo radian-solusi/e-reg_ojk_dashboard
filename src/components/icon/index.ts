@@ -18,6 +18,7 @@ import IconInfoCircle from '@/components/icon/icon-info-circle.vue';
 import IconBellBing from '@/components/icon/icon-bell-bing.vue';
 import IconUser from '@/components/icon/icon-user.vue';
 import IconLogout from '@/components/icon/icon-logout.vue';
+import IconLoadingPage from './icon-loading-page.vue';
 
 export {
     IconCaretDown,
@@ -39,5 +40,6 @@ export {
     IconInfoCircle,
     IconBellBing,
     IconUser,
-    IconLogout
+    IconLogout,
+    IconLoadingPage,
 }

@@ -46,13 +46,11 @@ export function useLogin() {
 
             if (response.success) {
                 if (!response.data.require_otp) {
-                    authStore.user = {
+                    authStore.login({
                         username: response.data.name,
                         token: response.data.token,
-                        isMultiFactorActive: response.data.is_multi_factor_active
-                    };
-
-                    await authStore.saveToStorage();
+                        isMultiFactorActive: response.data.is_multi_factor_active,
+                    })
                     router.push({ name: "home" });
                 } else {
                     requireOtp.value = true;
@@ -76,13 +74,11 @@ export function useLogin() {
             const response = await fetchWrapper<LoginResponse>("POST", "/auth/verify-otp", forms.value);
 
             if (response.success && !response.data.require_otp) {
-                authStore.user = {
+                authStore.login({
                     username: response.data.name,
                     token: response.data.token,
-                    isMultiFactorActive: response.data.is_multi_factor_active
-                };
-
-                await authStore.saveToStorage();
+                    isMultiFactorActive: response.data.is_multi_factor_active,
+                })
                 router.push({ name: "home" });
             } else {
                 console.log("OTP verification failed:", response.message);

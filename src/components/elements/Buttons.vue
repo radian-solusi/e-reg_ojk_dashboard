@@ -1,8 +1,8 @@
 <template>
     <button v-bind="$attrs" class="btn" :class="classButtons" :disabled="disabled || loading">
         <slot v-if="!loading" />
-        <div v-else class="flex flex-wrap items-center justify-center w-full sm:w-1/2 text-center">
-            <span class="animate-spin border-4 border-white-light border-l-transparent rounded-full w-8 h-8 inline-block align-middle m-auto" />
+        <div v-else class="flex flex-wrap items-center justify-center w-full sm:w-1/2 gap-4 lg:gap-6 text-center">
+            <span class="animate-spin border-4 border-white-light border-l-transparent rounded-full w-4 h-4 inline-block align-middle" />
             {{ loadingText }}
         </div>
     </button>

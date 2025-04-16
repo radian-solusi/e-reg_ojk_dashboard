@@ -3,7 +3,6 @@ import type { methodRequest } from "@composables/types";
 
 export async function fetchWrapper<T>(request: methodRequest, pathUrl: string, data?: any): Promise<T> {
     const authorization = useAuthStore();
-    await authorization.syncFromStorage();
     const options: RequestInit = {
         method: request,
         headers: {
@@ -41,9 +40,9 @@ export async function fetchWrapper<T>(request: methodRequest, pathUrl: string, d
             throw new Error("Failed to parse JSON response", { cause: jsonErrr });
         }
 
-        if (!response.ok) {
+        /* if (!response.ok) {
             return Promise.reject(responseData); 
-        }
+        } */
 
         return responseData as T;
     } catch (error) {

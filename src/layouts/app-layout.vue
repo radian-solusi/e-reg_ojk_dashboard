@@ -5,7 +5,7 @@
         <div class="fixed inset-0 bg-[black]/60 z-50 lg:hidden" :class="{ hidden: !store.sidebar }" @click="store.toggleSidebar()"></div>
 
         <!-- screen loader -->
-        <screen-loader />
+        <screen-loader v-show="store.isShowMainLoader" />
 
         <div class="fixed bottom-6 ltr:right-6 rtl:left-6 z-50">
             <template v-if="showTopButton">
@@ -99,12 +99,10 @@
 
     // watch isSynced from authStore and current route path
     watch(
-        [() => authStore.isSynced, () => router.currentRoute.value.path],
-        ([synced, currentPath]) => {
-            if (synced) {
-                
-                // reset modal state
-                if (currentPath !== '/profile') {
+        [() => router.currentRoute.value.path],
+        ([currentPath]) => {
+            // reset modal state
+            if (currentPath !== '/profile') {
                     modalShown.value = false;
                 }
                 
@@ -113,7 +111,6 @@
                     show2FAModal.value = true;
                     modalShown.value = true;
                 }
-            }
         },
         { immediate: true }
     );

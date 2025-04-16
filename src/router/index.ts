@@ -49,8 +49,6 @@ router.beforeEach(async (to, from, next) => {
         store.setMainLayout('app');
     }
 
-    await auth.syncFromStorage();
-
     if (to.path === '/login' && auth.isLogin) {
         return next({ path: '/' });
     }
@@ -62,7 +60,7 @@ router.beforeEach(async (to, from, next) => {
 
     next(true);
 });
-router.afterEach((to, from, next) => {
+router.afterEach(() => {
     appSetting.changeAnimation();
 });
 export default router;

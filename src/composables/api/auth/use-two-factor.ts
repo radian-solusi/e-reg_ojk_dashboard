@@ -31,7 +31,7 @@ export function useTwoFactor() {
       const response = await fetchWrapper<SuccessResponse<[]>>("POST", "/2fa/activate");
       if (response.success) {
         // Update state di authStore (misalnya method activateMultiFactor di store)
-        await authStore.activateMultiFactor();
+        authStore.activateMultiFactor();
       }
     } catch (err: unknown) {
       const errorData = err as ErrorResponse;

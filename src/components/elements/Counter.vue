@@ -1,5 +1,5 @@
 <template>
-    <count-up class="text-primary text-xl sm:text-3xl text-center" :startVal="start" :end-val="current" :duration="duration" />
+    <count-up class="text-xl sm:text-3xl md:text-5xl text-center" :class="collectedClass" :startVal="start" :end-val="current" :duration="duration" />
 </template>
 <script setup lang="ts">
 import CountUp from 'vue-countup-v3'

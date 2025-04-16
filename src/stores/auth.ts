@@ -1,9 +1,22 @@
 import { computed, ref } from 'vue';
 import { defineStore } from 'pinia';
 import router from '@/router';
-import { fetchWrapper } from '@composables/fetchers';
 import { encrypt, decrypt } from '@/composables/security';
-import type { userlogin, formLogin } from '@composables/types';
+import type { userlogin, StorageLike } from '@composables/types';
+
+const customStorage: StorageLike = {
+    setItem(key: string, state: string) {
+        const encrypted = encrypt(state);
+        return localStorage.setItem('authorization', encrypted);
+    },
+    getItem(key: string): string | null {
+        const state = localStorage.getItem(key);
+        if (state === null) return null;
+        const decrypted = decrypt(state as string);
+        return decrypted
+    },
+}
+
 
 export const useAuthStore = defineStore('auth', () => {
     const user = ref<userlogin>({
@@ -12,29 +25,6 @@ export const useAuthStore = defineStore('auth', () => {
         isMultiFactorActive: false,
     })
     const returnUrl = ref<string>('/');
-    const isSynced = ref(false)
-    const syncFromStorage = async () => {
-        let auths = localStorage.getItem('auths')
-        if (auths) {
-            // decrypt
-            auths = await decrypt(auths)
-            user.value = JSON.parse(auths)
-        }
-        isSynced.value = true;
-    }
-    const getUser = computed(() => {
-        if (!isSynced.value) {
-            syncFromStrorage()
-        }
-        return user
-    })
-    
-    const saveToStorage = async () => {
-        // encrypt
-        const encryptedAuth = await encrypt(JSON.stringify(user.value))
-        localStorage.setItem('auths', encryptedAuth || "")
-        isSynced.value = true
-    }
 
     const isLogin = computed(() => {
         return user.value.token ? true : false
@@ -43,34 +33,19 @@ export const useAuthStore = defineStore('auth', () => {
         return user.value.isMultiFactorActive
     })
     const getToken = computed(() => {
-        if (!isSynced.value) {
-            syncFromStorage()
-        }
         return user.value.token
     })
     const getUsername = computed(() => {
         return user.value.username
     })
     const logout = () => {
-        user.value = {
-            username: '',
-        }
-        localStorage.removeItem('auths')
+        user.value.username = ''
+        user.value.token = ''
+        user.value.isMultiFactorActive = false
         router.push('/login')
-        isSynced.value = false
     }
-    const login = async (form: formLogin): Promise<{ status: boolean, message?: string}> => {
-        const responseLogin = await fetchWrapper('POST','/login', form);
-        console.log(responseLogin)
-        await saveToStorage()
-        return {
-            status: true,
-        }
-    }
-    const activateMultiFactor = async () => {
+    const activateMultiFactor = () => {
         user.value.isMultiFactorActive = true;
-        await saveToStorage();
-        await syncFromStorage();
     };
 
     const setReturnUrl = (url: string) => {
@@ -79,5 +54,20 @@ export const useAuthStore = defineStore('auth', () => {
     const getReturnUrl = () => {
         return returnUrl.value
     }
-    return { user, isLogin, isSynced, isMultiFactorActive, syncFromStorage, saveToStorage, getToken, getUsername, logout, login, activateMultiFactor, setReturnUrl, getReturnUrl }
+
+    const login = (payload: userlogin) => {
+        user.value = payload
+    }
+    return { user, isLogin, isMultiFactorActive,  getToken, getUsername, logout, activateMultiFactor, setReturnUrl, getReturnUrl, login }
+},{
+    persist: {
+        enabled: true,
+        strategies: [
+            {
+                key: 'authorization',
+                paths: ['user'],
+                storage: customStorage as Storage
+            }
+        ]
+    }
 })
